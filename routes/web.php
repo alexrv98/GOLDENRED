@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UsuariosController;
+use App\Http\Controllers\ClientesController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -24,3 +27,6 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/usuarios', [UsuariosController::class, 'index'])->name('usuarios.index');
+Route::get('/clientes', [ClientesController::class, 'index'])->name('clientes.index');

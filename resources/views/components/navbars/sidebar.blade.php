@@ -19,7 +19,7 @@
                 <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Páginas</h6>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white {{ $activePage == 'dashboard' ? ' active bg-gradient-primary' : '' }} "
+                <a class="nav-link text-white {{ $activePage == 'alt-dashboard' ? ' active bg-gradient-primary' : '' }} "
                     href="{{ route('dashboard') }}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">table_view</i>
@@ -28,7 +28,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white ">
+                <a class="nav-link text-white {{ $activePage == 'usuarios' ? ' active bg-gradient-primary' : '' }}"
+        href="{{ route('usuarios.index') }}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">table_view</i>
                     </div>
@@ -36,7 +37,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white ">
+                <a class="nav-link text-white {{ $activePage == 'clientes' ? ' active bg-gradient-primary' : '' }}"
+        href="{{ route('clientes.index') }}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">receipt_long</i>
                     </div>
