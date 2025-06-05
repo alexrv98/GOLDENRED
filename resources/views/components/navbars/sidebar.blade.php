@@ -20,7 +20,7 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link text-white {{ $activePage == 'alt-dashboard' ? ' active bg-gradient-primary' : '' }} "
-                    href="{{ route('dashboard') }}">
+                    href="{{ route('dashboard.alt') }}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">table_view</i>
                     </div>
