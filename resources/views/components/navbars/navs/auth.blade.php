@@ -12,21 +12,25 @@
         </nav>
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
             <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-                <div class="input-group input-group-outline">
-                    <label class="form-label">Type here...</label>
-                    <input type="text" class="form-control">
+                <!-- Nombre de usuario: solo visible en pantallas md en adelante -->
+                <div class="font-medium text-base text-gray-800 d-none d-md-block">
+                    {{ Auth::user()->name }}
                 </div>
             </div>
+
             <form method="POST" action="{{ route('logout') }}" class="d-none" id="logout-form">
                 @csrf
             </form>
-            <ul class="navbar-nav  justify-content-end">
+
+            <ul class="navbar-nav justify-content-end align-items-center">
                 <li class="nav-item d-flex align-items-center">
-                    <a href="javascript:;" class="nav-link text-body font-weight-bold px-0">
+                    <a href="javascript:;" class="nav-link text-body font-weight-bold px-0" 
+                       onclick="event.preventDefault();document.getElementById('logout-form').submit();">
                         <i class="fa fa-user me-sm-1"></i>
-                        <span class="d-sm-inline d-none"
-                            onclick="event.preventDefault();document.getElementById('logout-form').submit();">Sign
-                            Out</span>
+                        <!-- Texto "Sign Out" visible solo en xs y sm, oculto en md+ -->
+                        <span class="d-inline d-md-none">Salir</span>
+                        <!-- Opcional: ícono "logout" visible siempre -->
+                        <span class="d-none d-md-inline">Salir</span> <!-- texto o ícono en md+ -->
                     </a>
                 </li>
                 <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
@@ -38,7 +42,6 @@
                         </div>
                     </a>
                 </li>
-                
             </ul>
         </div>
     </div>

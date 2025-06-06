@@ -4,6 +4,15 @@
         <!-- Navbar -->
         <x-navbars.navs.auth titlePage="Usuarios"></x-navbars.navs.auth>
         <!-- End Navbar -->
+
+        <!-- Botón Roles arriba a la derecha -->
+        <div class="d-flex justify-content-end px-4 mt-3">
+            <a href="{{ route('roles.index') }}" class="btn btn-primary">
+                Roles
+            </a>
+        </div>
+
+
          <div class="card m-4">
       <div class="table-responsive p-3">
        <table class="table align-items-center mb-0">

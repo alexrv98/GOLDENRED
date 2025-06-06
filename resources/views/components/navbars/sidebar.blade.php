@@ -6,7 +6,7 @@
     <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
             aria-hidden="true" id="iconSidenav"></i>
-        <a class="navbar-brand m-0 d-flex text-wrap align-items-center" href=" {{ route('dashboard') }} ">
+        <a class="navbar-brand m-0 d-flex text-wrap align-items-center" href=" {{ route('alt-dashboard') }} ">
             <img src="{{ asset('assets') }}/img/golden.png" class="navbar-brand-img h-100" alt="main_logo">
             <span class="ms-2 font-weight-bold text-white">GOLDEN RED</span>
         </a>
@@ -18,15 +18,18 @@
             <li class="nav-item mt-3">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Páginas</h6>
             </li>
+
             <li class="nav-item">
                 <a class="nav-link text-white {{ $activePage == 'alt-dashboard' ? ' active bg-gradient-primary' : '' }} "
-                    href="{{ route('dashboard.alt') }}">
+                    href="{{ route('alt-dashboard') }}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">table_view</i>
                     </div>
                     <span class="nav-link-text ms-1">Inicio</span>
                 </a>
             </li>
+
+            @can('Ver usuarios')
             <li class="nav-item">
                 <a class="nav-link text-white {{ $activePage == 'usuarios' ? ' active bg-gradient-primary' : '' }}"
         href="{{ route('usuarios.index') }}">
@@ -36,6 +39,9 @@
                     <span class="nav-link-text ms-1">Usuarios</span>
                 </a>
             </li>
+            @endcan
+
+            @can('Ver clientes')
             <li class="nav-item">
                 <a class="nav-link text-white {{ $activePage == 'clientes' ? ' active bg-gradient-primary' : '' }}"
         href="{{ route('clientes.index') }}">
@@ -45,6 +51,9 @@
                     <span class="nav-link-text ms-1">Clientes</span>
                 </a>
             </li>
+            @endcan
+
+            @can('Ver paquetes')
             <li class="nav-item">
                 <a class="nav-link text-white ">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -53,6 +62,9 @@
                     <span class="nav-link-text ms-1">Paquetes</span>
                 </a>
             </li>
+            @endcan
+
+            @can('Ver ventas')
             <li class="nav-item">
                 <a class="nav-link text-white ">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -61,6 +73,7 @@
                     <span class="nav-link-text ms-1">Ventas</span>
                 </a>
             </li>
+            @endcan
             
         </ul>
     </div>

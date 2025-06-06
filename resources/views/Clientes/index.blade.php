@@ -4,6 +4,8 @@
         <!-- Navbar -->
         <x-navbars.navs.auth titlePage="Clientes"></x-navbars.navs.auth>
         <!-- End Navbar -->
+
+        
          <div class="card m-4">
       <div class="table-responsive p-3">
        <table class="table align-items-center mb-0">

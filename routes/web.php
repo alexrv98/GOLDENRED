@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\ClientesController;
+use App\Http\Controllers\RolesController;
+
 
 
 Route::get('/', function () {
@@ -18,7 +20,7 @@ Route::get('/dashboard', function () {
 Route::get('/alt-dashboard', function () {
     return view('dashboard.index');           // resources/views/dasboard/index.blade.php
 })->middleware(['auth', 'verified'])
-  ->name('dashboard.alt');  
+  ->name('alt-dashboard');  
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -28,5 +30,10 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-Route::get('/usuarios', [UsuariosController::class, 'index'])->name('usuarios.index');
-Route::get('/clientes', [ClientesController::class, 'index'])->name('clientes.index');
+
+Route::resource('usuarios', UsuariosController::class)->middleware('auth');
+    
+Route::resource('roles', controller: RolesController::class)->middleware('auth');
+
+Route::get('/clientes', [ClientesController::class, 'index'])->name(name: 'clientes.index');
+
