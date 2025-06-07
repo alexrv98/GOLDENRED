@@ -4,11 +4,11 @@
         <!-- Navbar -->
         <x-navbars.navs.auth titlePage="Roles"></x-navbars.navs.auth>
         <!-- End Navbar -->
-         <div class="card m-4">
+        <div class="card m-4">
             <div class="table-responsive p-3">
                 <div class="d-flex justify-content-between align-items-center px-3 pt-3">
                     <h5 class="mb-0">Lista de Roles</h5>
-                     @can('Crear roles')
+                    @can('Crear roles')
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearRol">
                         <span class="material-icons align-middle">add</span> Agregar Rol
                     </button>
@@ -24,6 +24,13 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            // Colocar primero el rol superadmin
+                            $roles = $roles->sortByDesc(function($role) {
+                                return $role->name === 'Superadmin';
+                            });
+                        @endphp
+
                         @foreach($roles as $role)
                         <tr>
                             <td>
@@ -44,25 +51,25 @@
                                 </p>
                             </td>
                             <td class="acciones-centro">
-                                @can('Editar roles')
-                                <button class="btn btn-link text-secondary p-0 mx-1" title="Editar"
-                                    data-bs-toggle="modal" data-bs-target="#modalEditarRol{{ $role->id }}">
-                                    <span class="material-icons">edit</span>
-                                </button>
-                                @endcan
-                                @include('roles.modal-edit', ['role' => $role, 'permissions' => $permissions])
+                                @if($role->name !== 'Superadmin')
+                                    @can('Editar roles')
+                                    <button class="btn btn-link text-secondary p-0 mx-1" title="Editar"
+                                        data-bs-toggle="modal" data-bs-target="#modalEditarRol{{ $role->id }}">
+                                        <span class="material-icons">edit</span>
+                                    </button>
+                                    @endcan
+                                    @include('roles.modal-edit', ['role' => $role, 'permissions' => $permissions])
 
-                                <!-- Botón para abrir modal eliminar -->
-                                @can('Eliminar roles')
-
-                                <button type="button" class="btn btn-link text-danger p-0 mx-1" 
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#modalEliminarRol{{ $role->id }}" 
-                                        title="Eliminar">
-                                    <span class="material-icons">delete_forever</span>
-                                </button>
-                                @endcan
-                                @include('roles.modal-delete', ['role' => $role])
+                                    @can('Eliminar roles')
+                                    <button type="button" class="btn btn-link text-danger p-0 mx-1" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#modalEliminarRol{{ $role->id }}" 
+                                            title="Eliminar">
+                                        <span class="material-icons">delete_forever</span>
+                                    </button>
+                                    @endcan
+                                    @include('roles.modal-delete', ['role' => $role])
+                                @endif
                             </td>
                         </tr>
                         @endforeach
@@ -74,9 +81,5 @@
 
         @include('roles.modal-create')
         @include('components.alert-toast')
-
-
     </main>
 </x-layout>
-
-

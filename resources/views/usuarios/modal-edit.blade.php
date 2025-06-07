@@ -44,6 +44,7 @@
             <label class="form-label fw-bold text-dark">Asignar Rol</label>
             <div class="row">
               @foreach ($roles as $role)
+              @if($role->name !== 'Superadmin')
                 <div class="col-4">
                   <div class="form-check">
                     <input class="form-check-input" type="radio" name="role" value="{{ $role->name }}"
@@ -51,6 +52,7 @@
                     <label class="form-check-label text-dark">{{ $role->name }}</label>
                   </div>
                 </div>
+                @endif
               @endforeach
             </div>
           </div>
