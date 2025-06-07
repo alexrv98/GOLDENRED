@@ -28,7 +28,7 @@
                     <span class="nav-link-text ms-1">Inicio</span>
                 </a>
             </li>
-
+ 
             @can('Ver usuarios')
             <li class="nav-item">
                 <a class="nav-link text-white {{ $activePage == 'usuarios' ? ' active bg-gradient-primary' : '' }}"
