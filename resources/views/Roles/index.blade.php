@@ -51,7 +51,6 @@
                                 </p>
                             </td>
                             <td class="acciones-centro">
-                                @if($role->name !== 'Superadmin')
                                     @can('Editar roles')
                                     <button class="btn btn-link text-secondary p-0 mx-1" title="Editar"
                                         data-bs-toggle="modal" data-bs-target="#modalEditarRol{{ $role->id }}">
@@ -69,7 +68,7 @@
                                     </button>
                                     @endcan
                                     @include('roles.modal-delete', ['role' => $role])
-                                @endif
+                                
                             </td>
                         </tr>
                         @endforeach
