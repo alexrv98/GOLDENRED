@@ -37,7 +37,7 @@ class UsuariosController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:8|confirmed',
             'role' => 'required|string'
         ]);
 
@@ -86,8 +86,6 @@ class UsuariosController extends Controller
 
     return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
 }
-
-
 
     public function destroy($id)
     {

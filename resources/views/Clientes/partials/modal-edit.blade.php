@@ -1,21 +1,19 @@
-<!-- Modal Editar Cliente -->
-<div class="modal fade" id="modalEditarCliente{{ $cliente->id }}" tabindex="-1" aria-labelledby="modalEditarClienteLabel{{ $cliente->id }}" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content border-0 shadow-lg">
-      <form action="{{ route('clientes.update', $cliente->id) }}" method="POST">
-        @csrf
-        @method('PUT')
 
-        <!-- ENCABEZADO -->
-        <div class="modal-header bg-gradient-dark border-bottom border-warning">
-          <h5 class="modal-title fw-bold d-flex align-items-center text-white" id="modalEditarClienteLabel{{ $cliente->id }}">
-            <i class="material-icons me-2 text-white">edit</i> Editar Cliente: {{ $cliente->nombre }}
-          </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar" style="filter: invert(1);"></button>
-        </div>
+<form action="{{ route('clientes.update', $cliente->id) }}" method="POST">
+  @csrf
+  @method('PUT')
 
-        <!-- CUERPO -->
-        <div class="modal-body text-start">
+  <!-- ENCABEZADO -->
+  <div class="modal-header bg-gradient-dark border-bottom border-warning">
+    <h5 class="modal-title fw-bold d-flex align-items-center text-white">
+      <i class="material-icons me-2 text-white">edit</i> Editar Cliente: {{ $cliente->nombre }}
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar" style="filter: invert(1);"></button>
+  </div>
+
+  <!-- CUERPO -->
+  <div class="modal-body text-start">
+<div class="modal-body text-start">
           <div class="row">
             <div class="col-md-4 mb-3">
               <label class="form-label fw-bold text-dark">Nombre</label>
@@ -79,6 +77,7 @@
               <textarea name="referencias" class="form-control border" rows="2">{{ $cliente->referencias }}</textarea>
             </div>
           </div>
+  </div>
 
 <!-- Apartado desplegable -->
 <details class="mb-3">
@@ -114,15 +113,11 @@
 </details>
 
         </div>
-
-        <!-- PIE DE MODAL -->
-        <div class="modal-footer border-0">
-          <button type="submit" class="btn btn-warning">
-            <i class="material-icons align-middle">save</i> Actualizar
-          </button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        </div>
-      </form>
-    </div>
+  <!-- PIE DE MODAL -->
+  <div class="modal-footer border-0">
+    <button type="submit" class="btn btn-warning">
+      <i class="material-icons align-middle">save</i> Actualizar
+    </button>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
   </div>
-</div>
+</form>

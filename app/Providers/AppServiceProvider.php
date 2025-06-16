@@ -3,7 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-
+use App\Listeners\RegistrarEntrada;
+use App\Listeners\RegistrarSalida;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -21,4 +22,13 @@ class AppServiceProvider extends ServiceProvider
     {
         //
     }
+
+    protected $listen = [
+    Login::class => [
+        RegistrarEntrada::class,
+    ],
+    Logout::class => [
+        RegistrarSalida::class,
+    ],
+];
 }

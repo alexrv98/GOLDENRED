@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use App\Models\Cliente;
 use App\Models\Paquete;
+use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Str;
+
 
 class ClientesController extends Controller
 {
@@ -14,15 +17,60 @@ class ClientesController extends Controller
         $this->middleware('permission:Ver clientes')->only(['index', 'show']);
         $this->middleware('permission:Crear clientes')->only(['create', 'store']);
         $this->middleware('permission:Editar clientes')->only(['edit', 'update']);
-        $this->middleware('permission:Eliminar  clientes')->only('destroy');
+        $this->middleware('permission:Eliminar clientes')->only('destroy');
     }
 
     public function index()
     {
-        $clientes = Cliente::all();
-        $paquetes = Paquete::all(); // 👈 Añadido para la vista
-        return view('clientes.index', compact('clientes', 'paquetes'));
+        $paquetes = Paquete::all();
+        return view('clientes.index', compact('paquetes'));
     }
+
+
+    public function data(Request $request)
+{
+    return DataTables::of(Cliente::select('id', 'nombre', 'telefono1', 'telefono2', 'dia_cobro', 'referencias'))
+        ->editColumn('nombre', function ($cliente) {
+            return '
+                <div class="d-flex px-2 py-1">
+                    <div class="my-auto">
+                        <h6 class="mb-0 text-xs fw-bold">' . e($cliente->nombre) . '</h6>
+                    </div>
+                </div>';
+        })
+        ->editColumn('telefono1', function ($cliente) {
+            return '<p class="text-xs font-weight-normal mb-0 text-dark">' . e($cliente->telefono1 ?? '—') . '</p>';
+        })
+        ->editColumn('telefono2', function ($cliente) {
+            return '<p class="text-xs font-weight-normal mb-0 text-dark">' . e($cliente->telefono2 ?? '—') . '</p>';
+        })
+        ->editColumn('dia_cobro', function ($cliente) {
+            return '<p class="text-xs font-weight-bold mb-0 text-primary">Día ' . e($cliente->dia_cobro) . '</p>';
+        })
+        ->editColumn('referencias', function ($cliente) {
+            return '<p class="text-xs text-secondary mb-0">' . e(Str::limit($cliente->referencias, 50)) . '</p>';
+        })
+        ->addColumn('acciones', function ($cliente) {
+            return view('clientes.partials.acciones', compact('cliente'))->render();
+        })
+        ->rawColumns(['nombre', 'telefono1', 'telefono2', 'dia_cobro', 'referencias', 'acciones'])
+        ->make(true);
+}
+
+
+    public function editModal($id)
+    {
+        $cliente = Cliente::findOrFail($id);
+        $paquetes = Paquete::select('id', 'nombre')->get();
+        return view('clientes.partials.modal-edit', compact('cliente', 'paquetes'));
+    }
+
+    public function deleteModal($id)
+    {
+        $cliente = Cliente::findOrFail($id);
+        return view('clientes.partials.modal-delete', compact('cliente'));
+    }
+
 
     public function create()
     {
@@ -58,34 +106,54 @@ class ClientesController extends Controller
         return view('clientes.edit', compact('cliente', 'paquetes'));
     }
 
-public function update(Request $request, $id)
-{
-    $cliente = Cliente::findOrFail($id);
+    public function update(Request $request, $id)
+    {
+        $cliente = Cliente::findOrFail($id);
 
-    $cliente->update($request->only([
-        'nombre',
-        'telefono1',
-        'telefono2',
-        'fecha_contrato',
-        'dia_cobro',
-        'paquete_id',
-        'Mac',
-        'IP',
-        'direccion',
-        'coordenadas',
-        'referencias',
-    ]));
+        $cliente->update($request->only([
+            'nombre',
+            'telefono1',
+            'telefono2',
+            'fecha_contrato',
+            'dia_cobro',
+            'paquete_id',
+            'Mac',
+            'IP',
+            'direccion',
+            'coordenadas',
+            'referencias',
+        ]));
 
-    if ($request->has('equipo')) {
-        $cliente->equipos()->updateOrCreate(
-            [], // Condición: puedes usar ['tipo' => 'principal'] si tuvieras varios
-            array_merge($request->input('equipo'), ['cliente_id' => $cliente->id])
-        );
+        if ($request->has('equipo')) {
+            $equipoData = $request->input('equipo');
+
+            // Convertimos campos vacíos en null
+            $filteredEquipo = array_map(function ($value) {
+                return $value === '' ? null : $value;
+            }, $equipoData);
+
+            // Verificamos si hay al menos un campo con valor
+            $hasData = collect($filteredEquipo)->filter(function ($value) {
+                return !is_null($value);
+            })->isNotEmpty();
+
+            if ($hasData) {
+                // Crear o actualizar normalmente
+                $cliente->equipos()->updateOrCreate(
+                    ['cliente_id' => $cliente->id],
+                    array_merge($filteredEquipo, ['cliente_id' => $cliente->id])
+                );
+            } else {
+                // Si ya existía un equipo, actualízalo poniendo los campos como null
+                $equipoExistente = $cliente->equipos()->where('cliente_id', $cliente->id)->first();
+                if ($equipoExistente) {
+                    $equipoExistente->delete();
+                }
+            }
+        }
+
+        return redirect()->route('clientes.index')->with('success', 'Cliente y equipo actualizados correctamente.');
     }
-
-    return redirect()->route('clientes.index')->with('success', 'Cliente y equipo actualizados correctamente.');
-}
-
 
     public function destroy($id)
     {

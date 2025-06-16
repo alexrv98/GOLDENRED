@@ -17,8 +17,8 @@ return new class extends Migration {
 
             $table->foreignId('paquete_id')->constrained('paquetes');
 
-            $table->string('propiedad_intelectual')->nullable();
-            $table->string('impermeable')->nullable();
+            $table->string('Mac')->nullable();
+            $table->string('IP')->nullable();
 
             $table->string('direccion', 255)->nullable();
             $table->string('coordenadas', 60)->nullable();

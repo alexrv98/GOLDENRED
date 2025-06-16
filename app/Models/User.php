@@ -51,4 +51,10 @@ class User extends Authenticatable
     {
         return $query->select('id', 'name', 'email');
     }
+
+    public function actividades()
+    {
+        return $this->hasMany(Actividad::class, 'usuario_id');
+    }
+
 }

@@ -1,5 +1,6 @@
 <!-- Modal Crear Usuario -->
-<div class="modal fade" id="modalCrearUsuario" tabindex="-1" aria-labelledby="modalCrearUsuarioLabel" aria-hidden="true">
+<div class="modal fade" id="modalCrearUsuario" tabindex="-1" aria-labelledby="modalCrearUsuarioLabel"
+  aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content border-0 shadow-lg">
       <form action="{{ route('usuarios.store') }}" method="POST">
@@ -28,7 +29,8 @@
             <label class="form-label fw-bold text-dark">Correo electrónico</label>
             <div class="input-group border rounded">
               <span class="input-group-text bg-light"><i class="material-icons text-secondary">email</i></span>
-              <input type="email" name="email" class="form-control border-0" placeholder="Ej. juan@example.com" required>
+              <input type="email" name="email" class="form-control border-0" placeholder="Ej. juan@example.com"
+                required>
             </div>
           </div>
 
@@ -36,7 +38,8 @@
             <label class="form-label fw-bold text-dark">Contraseña</label>
             <div class="input-group border rounded">
               <span class="input-group-text bg-light"><i class="material-icons text-secondary">lock</i></span>
-              <input type="password" name="password" class="form-control border-0" placeholder="Mínimo 8 caracteres" required>
+              <input type="password" name="password" id="password" class="form-control border-0"
+                placeholder="Mínimo 8 caracteres" minlength="8" required>
             </div>
           </div>
 
@@ -44,25 +47,29 @@
             <label class="form-label fw-bold text-dark">Confirmar Contraseña</label>
             <div class="input-group border rounded">
               <span class="input-group-text bg-light"><i class="material-icons text-secondary">lock</i></span>
-              <input type="password" name="password_confirmation" class="form-control border-0" placeholder="Repite la contraseña" required>
+              <input type="password" name="password_confirmation" id="password_confirmation"
+                class="form-control border-0" placeholder="Repite la contraseña" minlength="8" required>
             </div>
+            <div id="passwordError" class="text-danger mt-1" style="display: none;">Las contraseñas no coinciden.</div>
           </div>
+
 
           <div class="mb-3">
             <label class="form-label fw-bold text-dark">Asignar Rol</label>
             <div class="row">
               @foreach ($roles as $role)
-                @if($role->name !== 'Superadmin')
-                <div class="col-4">
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="role" value="{{ $role->name }}" id="role{{ $role->id }}" required>
-                    <label class="form-check-label" for="role{{ $role->id }}">
-                      {{ $role->name }}
-                    </label>
-                  </div>
-                </div>
-                 @endif
-              @endforeach
+            @if($role->name !== 'Superadmin')
+          <div class="col-4">
+          <div class="form-check">
+          <input class="form-check-input" type="radio" name="role" value="{{ $role->name }}"
+          id="role{{ $role->id }}" required>
+          <label class="form-check-label" for="role{{ $role->id }}">
+          {{ $role->name }}
+          </label>
+          </div>
+          </div>
+        @endif
+        @endforeach
             </div>
           </div>
         </div>
@@ -78,3 +85,36 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('password_confirmation');
+    const errorDiv = document.getElementById('passwordError');
+    const form = document.querySelector('#modalCrearUsuario form');
+
+    function validarPassword() {
+      if (confirmPassword.value === "") {
+        errorDiv.style.display = "none";
+        return;
+      }
+
+      if (password.value !== confirmPassword.value) {
+        errorDiv.style.display = "block";
+      } else {
+        errorDiv.style.display = "none";
+      }
+    }
+
+    confirmPassword.addEventListener('input', validarPassword);
+    password.addEventListener('input', validarPassword);
+
+    form.addEventListener('submit', function (e) {
+      if (password.value !== confirmPassword.value) {
+        e.preventDefault();
+        validarPassword();
+        confirmPassword.focus();
+      }
+    });
+  });
+</script>
