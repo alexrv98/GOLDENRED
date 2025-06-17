@@ -6,9 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use App\Models\Cliente;
 use App\Models\Paquete;
-use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Support\Str;
-
 
 class ClientesController extends Controller
 {
@@ -17,46 +14,22 @@ class ClientesController extends Controller
         $this->middleware('permission:Ver clientes')->only(['index', 'show']);
         $this->middleware('permission:Crear clientes')->only(['create', 'store']);
         $this->middleware('permission:Editar clientes')->only(['edit', 'update']);
-        $this->middleware('permission:Eliminar clientes')->only('destroy');
+        $this->middleware('permission:Eliminar  clientes')->only('destroy');
     }
 
     public function index()
     {
-        $paquetes = Paquete::all();
-        return view('clientes.index', compact('paquetes'));
+        $clientes = Cliente::all();
+        $paquetes = Paquete::all(); // 👈 Añadido para la vista
+        return view('clientes.index', compact('clientes', 'paquetes'));
     }
 
-
-    public function data(Request $request)
-{
-    return DataTables::of(Cliente::select('id', 'nombre', 'telefono1', 'telefono2', 'dia_cobro', 'referencias'))
-        ->editColumn('nombre', function ($cliente) {
-            return '
-                <div class="d-flex px-2 py-1">
-                    <div class="my-auto">
-                        <h6 class="mb-0 text-xs fw-bold">' . e($cliente->nombre) . '</h6>
-                    </div>
-                </div>';
-        })
-        ->editColumn('telefono1', function ($cliente) {
-            return '<p class="text-xs font-weight-normal mb-0 text-dark">' . e($cliente->telefono1 ?? '—') . '</p>';
-        })
-        ->editColumn('telefono2', function ($cliente) {
-            return '<p class="text-xs font-weight-normal mb-0 text-dark">' . e($cliente->telefono2 ?? '—') . '</p>';
-        })
-        ->editColumn('dia_cobro', function ($cliente) {
-            return '<p class="text-xs font-weight-bold mb-0 text-primary">Día ' . e($cliente->dia_cobro) . '</p>';
-        })
-        ->editColumn('referencias', function ($cliente) {
-            return '<p class="text-xs text-secondary mb-0">' . e(Str::limit($cliente->referencias, 50)) . '</p>';
-        })
-        ->addColumn('acciones', function ($cliente) {
-            return view('clientes.partials.acciones', compact('cliente'))->render();
-        })
-        ->rawColumns(['nombre', 'telefono1', 'telefono2', 'dia_cobro', 'referencias', 'acciones'])
-        ->make(true);
-}
-
+    public function create()
+    {
+        $paquetes = Paquete::all(); // 👈 También puedes usar esto si tienes una vista create separada
+        return view('clientes.create', compact('paquetes'));
+    }
+    
 
     public function editModal($id)
     {
@@ -71,12 +44,6 @@ class ClientesController extends Controller
         return view('clientes.partials.modal-delete', compact('cliente'));
     }
 
-
-    public function create()
-    {
-        $paquetes = Paquete::all(); // 👈 También puedes usar esto si tienes una vista create separada
-        return view('clientes.create', compact('paquetes'));
-    }
 
     public function store(Request $request)
     {

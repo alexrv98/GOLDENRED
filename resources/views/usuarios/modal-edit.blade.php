@@ -1,5 +1,5 @@
 <!-- Modal Editar Usuario -->
-<div class="modal fade" id="modalEditarUsuario{{ $user->id }}" tabindex="-1" aria-labelledby="modalEditarUsuarioLabel{{ $user->id }}" aria-hidden="true">
+<div class="modal fade" id="modalEditarUsuario{{ $user->id }}" tabindex="-1" aria-labelledby="modalEditarUsuarioLabel{{ $user->id }}" aria-hidden="true" translate="no">
   <div class="modal-dialog modal-lg">
     <div class="modal-content border-0 shadow-lg">
       <form action="{{ route('usuarios.update', $user->id) }}" method="POST">

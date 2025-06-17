@@ -1,7 +1,7 @@
-<x-layout bodyClass="g-sidenav-show bg-gray-200">
+<x-layout bodyClass="g-sidenav-show bg-gray-200" >
     <x-navbars.sidebar activePage='actividades'></x-navbars.sidebar>
 
-    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg" translate="no">
         <x-navbars.navs.auth titlePage="Actividades" />
 
         <div class="card m-4">

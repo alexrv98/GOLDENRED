@@ -1,4 +1,4 @@
-<div class="modal-header custom-header rounded-top-3 d-flex align-items-center">
+<div class="modal-header custom-header rounded-top-3 d-flex align-items-center" translate="no">
   <span class="material-icons-round custom-icon">delete_forever</span>
   <h5 class="modal-title text-white mb-0">Confirmar eliminación</h5>
   <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="modal" aria-label="Cerrar"></button>

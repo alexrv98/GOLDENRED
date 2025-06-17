@@ -1,6 +1,6 @@
 <!-- Modal Crear Usuario -->
 <div class="modal fade" id="modalCrearUsuario" tabindex="-1" aria-labelledby="modalCrearUsuarioLabel"
-  aria-hidden="true">
+  aria-hidden="true" translate="no">
   <div class="modal-dialog modal-lg">
     <div class="modal-content border-0 shadow-lg">
       <form action="{{ route('usuarios.store') }}" method="POST">

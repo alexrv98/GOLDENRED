@@ -1,10 +1,10 @@
-<x-layout bodyClass="g-sidenav-show  bg-gray-200">
-    <x-navbars.sidebar activePage='usuarios'></x-navbars.sidebar>
-    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-        <!-- Navbar -->
-        <x-navbars.navs.auth titlePage="Usuarios"></x-navbars.navs.auth>
-        <!-- End Navbar -->
+<x-layout bodyClass="g-sidenav-show bg-gray-200">
+    <x-navbars.sidebar activePage='usuarios' />
 
+    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg" translate="no">
+        <!-- Navbar -->
+        <x-navbars.navs.auth titlePage="Usuarios" />
+        <!-- End Navbar -->
 
         <div class="card m-4">
             <div class="table-responsive p-3">
@@ -17,20 +17,17 @@
                     @endcan
                 </div>
 
-                <table id="tabla-usuarios" class="table align-items-center mb-0 w-100" style="visibility: hidden;">
+                <table id="tabla-usuarios" class="table align-items-center mb-0 w-100 d-none">
                     <thead>
                         <tr>
                             <th class="text-uppercase text-dark text-xs font-weight-bolder">Nombre</th>
-                            <th class="text-uppercase text-dark text-xs font-weight-bolder ps-2">Correo
-                            </th>
-                            <th class="text-uppercase text-dark text-xs font-weight-bolder ps-2 text-center">
-                                Roles</th>
-                            <th class="text-uppercase text-dark text-xs font-weight-bolder ps-2 text-center">
-                                Acciones</th>
+                            <th class="text-uppercase text-dark text-xs font-weight-bolder ps-2">Correo</th>
+                            <th class="text-uppercase text-dark text-xs font-weight-bolder ps-2 text-center">Roles</th>
+                            <th class="text-uppercase text-dark text-xs font-weight-bolder ps-2 text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($users as $user)
+                        @forelse ($users as $user)
                             <tr>
                                 <td>
                                     <div class="d-flex px-2 py-1">
@@ -56,8 +53,8 @@
                                     @endcan
 
                                     @can('Eliminar usuarios')
-                                        <button type="button" class="btn btn-link text-danger p-0 mx-1" data-bs-toggle="modal"
-                                            data-bs-target="#modalEliminarUsuario{{ $user->id }}" title="Eliminar">
+                                        <button type="button" class="btn btn-link text-danger p-0 mx-1" title="Eliminar"
+                                            data-bs-toggle="modal" data-bs-target="#modalEliminarUsuario{{ $user->id }}">
                                             <span class="material-icons">delete_forever</span>
                                         </button>
                                     @endcan
@@ -67,13 +64,11 @@
                                     @include('usuarios.modal-delete', ['user' => $user])
                                 </td>
                             </tr>
-                        @endforeach
-
-                        @if($users->isEmpty())
+                        @empty
                             <tr>
                                 <td colspan="4" class="text-center text-xs">No hay usuarios registrados.</td>
                             </tr>
-                        @endif
+                        @endforelse
                     </tbody>
                 </table>
             </div>

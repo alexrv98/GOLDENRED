@@ -1,4 +1,4 @@
-<div class="modal fade" id="modalCrearRol" tabindex="-1" aria-labelledby="modalCrearRolLabel" aria-hidden="true">
+<div class="modal fade" id="modalCrearRol" tabindex="-1" aria-labelledby="modalCrearRolLabel" aria-hidden="true" translate="no">
   <div class="modal-dialog modal-lg">
     <div class="modal-content border-0 shadow-lg">
       <form action="{{ route('roles.store') }}" method="POST">
