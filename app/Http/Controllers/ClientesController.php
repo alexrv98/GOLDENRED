@@ -14,7 +14,7 @@ class ClientesController extends Controller
         $this->middleware('permission:Ver clientes')->only(['index', 'show']);
         $this->middleware('permission:Crear clientes')->only(['create', 'store']);
         $this->middleware('permission:Editar clientes')->only(['edit', 'update']);
-        $this->middleware('permission:Eliminar  clientes')->only('destroy');
+        $this->middleware('permission:Eliminar clientes')->only('destroy');
     }
 
     public function index()

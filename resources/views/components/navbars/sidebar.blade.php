@@ -3,7 +3,7 @@
 
 <aside
     class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-dark"
-    id="sidenav-main"  translate="no">
+    id="sidenav-main" translate="no">
 
     <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
@@ -92,7 +92,8 @@
 
             @can('Ver paquetes')
                 <li class="nav-item">
-                    <a class="nav-link text-white ">
+                    <a class="nav-link text-white {{ $activePage == 'paquetes' ? ' active bg-gradient-primary' : '' }}"
+                        href="{{ route('paquetes.index') }}">
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">view_in_ar</i>
                         </div>

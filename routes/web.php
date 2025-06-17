@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActividadController;
+use App\Http\Controllers\PaquetesController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuariosController;
@@ -26,7 +27,6 @@ Route::middleware(['auth', NoCache::class,])->group(function () {
 
     Route::resource('roles', RolesController::class);
 
-    Route::get('/clientes/data', [ClientesController::class, 'data'])->name('clientes.data');
     Route::get('clientes/{id}/edit-modal', [ClientesController::class, 'editModal'])->name('clientes.edit-modal');
     Route::get('clientes/{id}/delete-modal', [ClientesController::class, 'deleteModal'])->name('clientes.delete-modal');
 
@@ -38,6 +38,7 @@ Route::middleware(['auth', NoCache::class,])->group(function () {
 
     Route::resource('actividades', ActividadController::class);
 
+    Route::resource('paquetes', PaquetesController::class);
 
 });
 
