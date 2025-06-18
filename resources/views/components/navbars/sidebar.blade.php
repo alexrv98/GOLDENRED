@@ -104,7 +104,8 @@
 
             @can('Ver ventas')
                 <li class="nav-item">
-                    <a class="nav-link text-white ">
+                    <a class="nav-link text-white {{ $activePage == 'ventas' ? ' active bg-gradient-primary' : '' }}"
+                        href="{{ route('ventas.index') }}">
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">format_textdirection_r_to_l</i>
                         </div>

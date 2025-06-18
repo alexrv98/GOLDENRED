@@ -62,6 +62,10 @@
                     ],
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-MX.json'
+                    },
+                    initComplete: function () {
+                        $('#loader-actividades').remove();
+                        tablaActividades.removeClass('d-none');
                     }
                 });
             }
@@ -138,6 +142,29 @@
                 });
             }
 
+
+             // Ventas
+            const tablaVentas = $('#tabla-ventas');
+            if (tablaVentas.length) {
+                tablaVentas.DataTable({
+                    pageLength: 10,
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-MX.json'
+                    },
+                    columnDefs: [
+                        { orderable: false, targets: 4 }
+                    ],
+                    order: [],
+                    initComplete: function () {
+                        $('#loader-ventas').remove();
+                        tablaVentas.removeClass('d-none');
+                    }
+                });
+            }
+
+
+
+
             // Modales dinámicos
             $(document).on('click', '.btn-modal', function () {
                 const url = $(this).data('url');
@@ -158,6 +185,24 @@
             });
         });
     </script>
+
+
+<script>
+document.querySelectorAll('.generar-venta-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const clienteId = this.getAttribute('data-cliente-id');
+        const modalElement = document.getElementById('modalCrearVenta');
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+
+        // Espera a que el modal esté completamente visible
+        modalElement.addEventListener('shown.bs.modal', function() {
+            document.getElementById('cliente_id').value = clienteId;
+        }, { once: true }); // solo lo ejecuta una vez
+    });
+});
+
+</script>
 </body>
 
 </html>

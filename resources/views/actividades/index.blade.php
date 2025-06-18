@@ -1,4 +1,4 @@
-<x-layout bodyClass="g-sidenav-show bg-gray-200" >
+<x-layout bodyClass="g-sidenav-show bg-gray-200">
     <x-navbars.sidebar activePage='actividades'></x-navbars.sidebar>
 
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg" translate="no">
@@ -11,7 +11,11 @@
                     <h5 class="mb-0">Registro de Actividades</h5>
                 </div>
 
-                <table id="tabla-actividades" class="table align-items-center mb-0">
+
+
+                <table id="tabla-actividades" class="table align-items-center mb-0 w-100 d-none">
+
+
                     <thead>
                         <tr>
                             <th class="text-uppercase text-dark text-xs font-weight-bolder">Usuario</th>
@@ -30,7 +34,10 @@
 
                     <tbody></tbody>
                 </table>
-
+                {{-- Loader --}}
+                <div id="loader-actividades" class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </div>
 
             </div>
         </div>

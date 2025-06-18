@@ -3,6 +3,7 @@
 use App\Http\Controllers\ActividadController;
 use App\Http\Controllers\PaquetesController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VentasController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\ClientesController;
@@ -39,6 +40,9 @@ Route::middleware(['auth', NoCache::class,])->group(function () {
     Route::resource('actividades', ActividadController::class);
 
     Route::resource('paquetes', PaquetesController::class);
+    
+    Route::resource( 'ventas', VentasController::class);
+
 
 });
 
