@@ -73,5 +73,8 @@
 
         <!-- Alertas -->
         @include('components.alert-toast')
+
+            @include('paquetes.partials.scripts')
+
     </main>
 </x-layout>

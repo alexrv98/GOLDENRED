@@ -82,6 +82,8 @@
 
         @include('roles.modal-create')
         @include('components.alert-toast')
+            @include('roles.partials.scripts')
+
     </main>
 
 </x-layout>

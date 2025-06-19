@@ -11,6 +11,10 @@ use App\Http\Controllers\RolesController;
 use App\Http\Middleware\NoCache;
 use App\Http\Controllers\EquipoController;
 
+Route::get('/ventas/recargo/{cliente}', [VentasController::class, 'calcularRecargo']);
+Route::get('/ventas/buscar-clientes', [VentasController::class, 'buscarClientes'])->name('ventas.buscar-clientes');
+
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -44,6 +48,9 @@ Route::middleware(['auth', NoCache::class,])->group(function () {
     Route::resource( 'ventas', VentasController::class);
 
 
+
 });
+
+
 
 require __DIR__ . '/auth.php';

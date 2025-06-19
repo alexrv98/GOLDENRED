@@ -30,9 +30,10 @@ class Venta extends Model
         return $this->belongsTo(Cliente::class);
     }
 
-    // Relación con usuario (encargado)
-    public function encargado()
+    // Relación con usuario (encargado)   // Relación hacia el usuario (quien generó la venta)
+    public function usuario()
     {
         return $this->belongsTo(User::class, 'usuario_id');
     }
+
 }

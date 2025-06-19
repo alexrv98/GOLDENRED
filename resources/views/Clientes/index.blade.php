@@ -34,11 +34,21 @@
                         <tbody>
                             @foreach ($clientes as $cliente)
                                 <tr>
-                                    <td><h6 class="mb-0 text-xs">{{ $cliente->nombre }}</h6></td>
-                                    <td><p class="text-xs mb-0">{{ $cliente->telefono1 }}</p></td>
-                                    <td><p class="text-xs mb-0">{{ $cliente->telefono2 }}</p></td>
-                                    <td><p class="text-xs mb-0 text-warning">{{ $cliente->dia_cobro }}</p></td>
-                                    <td><p class="text-xs mb-0">{{ $cliente->referencias }}</p></td>
+                                    <td>
+                                        <h6 class="mb-0 text-xs">{{ $cliente->nombre }}</h6>
+                                    </td>
+                                    <td>
+                                        <p class="text-xs mb-0">{{ $cliente->telefono1 }}</p>
+                                    </td>
+                                    <td>
+                                        <p class="text-xs mb-0">{{ $cliente->telefono2 }}</p>
+                                    </td>
+                                    <td>
+                                        <p class="text-xs mb-0 text-warning">{{ $cliente->dia_cobro }}</p>
+                                    </td>
+                                    <td>
+                                        <p class="text-xs mb-0">{{ $cliente->referencias }}</p>
+                                    </td>
                                     <td class="text-center">
                                         @can('Editar clientes')
                                             <button class="btn btn-link text-success p-0 mx-1 btn-modal" title="Editar"
@@ -70,6 +80,8 @@
 
         {{-- Toast --}}
         @include('components.alert-toast')
+        @include('clientes.partials.scripts')
+
 
         {{-- Modal dinámico --}}
         <div class="modal fade" id="modalDinamico" tabindex="-1" aria-hidden="true">

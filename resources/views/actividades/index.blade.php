@@ -42,4 +42,7 @@
             </div>
         </div>
     </main>
+
+    @include('actividades.partials.scripts')
+
 </x-layout>

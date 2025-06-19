@@ -59,15 +59,27 @@ class Cliente extends Model
     }
 
     /**
- * Relación con el modelo Equipo.
- *
- * Un cliente puede tener varios equipos.
- *
- * @return \Illuminate\Database\Eloquent\Relations\HasMany
- */
-public function equipos()
-{
-    return $this->hasMany(Equipo::class);
-}
+     * Relación con el modelo Equipo.
+     *
+     * Un cliente puede tener varios equipos.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function equipos()
+    {
+        return $this->hasMany(Equipo::class);
+    }
+
+    public function ventas()
+    {
+        return $this->hasMany(Venta::class);
+    }
+
+    public function ventaPendiente()
+    {
+        // aquí va tu lógica de control para saber si ya pagó el mes actual
+        $ultimaVenta = $this->ventas()->latest()->first();
+        return !$ultimaVenta || $ultimaVenta->estado == 'pendiente';
+    }
 
 }

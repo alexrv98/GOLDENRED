@@ -1,6 +1,6 @@
 <!-- Modal Crear Cliente -->
-<div class="modal fade" id="modalCrearCliente" tabindex="-1" aria-labelledby="modalCrearClienteLabel"
-  aria-hidden="true" translate="no">
+<div class="modal fade" id="modalCrearCliente" tabindex="-1" aria-labelledby="modalCrearClienteLabel" aria-hidden="true"
+  translate="no">
   <div class="modal-dialog modal-lg">
     <div class="modal-content border-0 shadow-lg">
       <form action="{{ route('clientes.store') }}" method="POST">
