@@ -29,8 +29,6 @@ class VentasController extends Controller
         return view('ventas.index', compact('clientes', 'ventasHoy'));
     }
 
-    // Método para calcular recargo (si quieres mantenerlo para llamadas AJAX)
-    // VentasController.php
     public function calcularRecargo(Cliente $cliente)
     {
         $fechaHoy = now()->startOfDay();
@@ -129,8 +127,24 @@ class VentasController extends Controller
 
         $total = $subtotal - ($request->descuento ?? 0) + ($request->recargo_domicilio ?? 0) + $recargo_falta_pago;
 
-        $periodoInicio = now()->startOfDay();
-        $periodoFin = $periodoInicio->copy()->addMonthsNoOverflow($meses);
+        $diaCobro = $cliente->dia_cobro ?? 1;
+
+if ($ultimaVenta) {
+    // 👉 Continuar justo después del periodo_fin anterior
+    $periodoInicio = Carbon::parse($ultimaVenta->periodo_fin)->startOfDay();
+} else {
+    // Primera venta: calcular desde el día de cobro más cercano a hoy
+    $hoy = now()->startOfDay();
+    $proximoCobro = $hoy->copy()->day($diaCobro);
+
+    if ($hoy->day > $diaCobro) {
+        $proximoCobro->addMonthNoOverflow();
+    }
+
+    $periodoInicio = $proximoCobro;
+}
+
+$periodoFin = $periodoInicio->copy()->addMonthsNoOverflow($meses);
 
 
         Venta::create([

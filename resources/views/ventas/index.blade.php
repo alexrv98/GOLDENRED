@@ -71,7 +71,7 @@
         <!-- Historial -->
         <div class="card m-4 p-4">
             <h5>Historial de Ventas de Hoy</h5>
-            
+
             @if($ventasHoy->isEmpty())
                 <p>No hay ventas registradas hoy.</p>
             @else
@@ -102,6 +102,6 @@
     </main>
     @include('ventas.partials.scripts')
     @include('ventas.partials.modal-confirmacion')
-        @include('components.alert-toast')
+    @include('components.alert-toast')
 
 </x-layout>
