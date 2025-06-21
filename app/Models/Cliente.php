@@ -26,6 +26,8 @@ class Cliente extends Model
         'direccion',
         'coordenadas',
         'referencias',
+        'torre', 
+        'panel',
     ];
 
     /**

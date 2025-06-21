@@ -59,6 +59,8 @@ class ClientesController extends Controller
             'direccion' => 'nullable|string|max:255',
             'coordenadas' => 'nullable|string|max:60',
             'referencias' => 'nullable|string',
+            'torre' => 'nullable|string|max:255',
+            'panel' => 'nullable|string|max:255',
         ]);
 
         Cliente::create($request->all());
@@ -89,6 +91,8 @@ class ClientesController extends Controller
             'direccion',
             'coordenadas',
             'referencias',
+            'torre',
+            'panel',
         ]));
 
         if ($request->has('equipo')) {
