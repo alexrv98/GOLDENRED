@@ -23,7 +23,8 @@
                             <th class="text-uppercase text-dark text-xs font-weight-bolder">Nombre</th>
                             <th class="text-uppercase text-dark text-xs font-weight-bolder ps-2">Correo</th>
                             <th class="text-uppercase text-dark text-xs font-weight-bolder ps-2 text-center">Roles</th>
-                            <th class="text-uppercase text-dark text-xs font-weight-bolder ps-2 text-center">Acciones</th>
+                            <th class="text-uppercase text-dark text-xs font-weight-bolder ps-2 text-center">Acciones
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,19 +46,22 @@
                                     @endforeach
                                 </td>
                                 <td class="align-middle text-center">
-                                    
-                                        <button class="btn btn-link text-success p-0 mx-1" title="Editar"
-                                            data-bs-toggle="modal" data-bs-target="#modalEditarUsuario{{ $user->id }}">
+                                    @if (!$user->hasRole('Superadmin'))
+
+                                        <button class="btn btn-link text-success p-0 mx-1" title="Editar" data-bs-toggle="modal"
+                                            data-bs-target="#modalEditarUsuario{{ $user->id }}">
                                             <span class="material-icons">edit</span>
                                         </button>
-                                    
 
-                                    @can('Eliminar usuarios')
-                                        <button type="button" class="btn btn-link text-danger p-0 mx-1" title="Eliminar"
-                                            data-bs-toggle="modal" data-bs-target="#modalEliminarUsuario{{ $user->id }}">
-                                            <span class="material-icons">delete_forever</span>
-                                        </button>
-                                    @endcan
+                                        @can('Eliminar usuarios')
+                                            <button type="button" class="btn btn-link text-danger p-0 mx-1" title="Eliminar"
+                                                data-bs-toggle="modal" data-bs-target="#modalEliminarUsuario{{ $user->id }}">
+                                                <span class="material-icons">delete_forever</span>
+                                            </button>
+                                        @endcan
+                                    @else
+                                        <span class="badge bg-success text-white text-xs">Protegido</span>
+                                    @endif
 
                                     <!-- Modales de Editar y Eliminar -->
                                     @include('usuarios.modal-edit', ['user' => $user, 'roles' => $roles])
@@ -80,7 +84,7 @@
         <!-- Alertas -->
         @include('components.alert-toast')
 
-            @include('usuarios.partials.scripts')
+        @include('usuarios.partials.scripts')
 
     </main>
 </x-layout>
