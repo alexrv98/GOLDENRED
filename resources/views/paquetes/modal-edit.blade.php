@@ -42,7 +42,9 @@
 
                 {{-- PIE --}}
                 <div class="modal-footer">
+                    @can('Editar paquetes')
                     <button type="submit" class="btn btn-warning text-white">Actualizar Paquete</button>
+                    @endcan
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
 
                 </div>

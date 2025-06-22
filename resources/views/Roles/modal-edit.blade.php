@@ -33,9 +33,11 @@
         </div>
 
         <div class="modal-footer">
+          @can('Editar roles')
           <button type="submit" class="btn btn-warning">
             <i class="material-icons align-middle">save</i> Actualizar
           </button>
+          @endcan
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         </div>
       </form>

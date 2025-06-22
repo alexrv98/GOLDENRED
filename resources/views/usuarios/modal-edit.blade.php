@@ -60,9 +60,11 @@
 
         <!-- PIE DE MODAL -->
         <div class="modal-footer border-0">
+          @can('Editar usuarios')
           <button type="submit" class="btn btn-warning">
             <i class="material-icons align-middle">save</i> Actualizar
           </button>
+          @endcan
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         </div>
       </form>

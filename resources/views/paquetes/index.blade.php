@@ -39,12 +39,12 @@
                                     <p class="text-xs font-weight-normal mb-0">${{ number_format($paquete->precio, 2) }}</p>
                                 </td>
                                 <td class="align-middle text-center">
-                                    @can('Editar paquetes')
+                                    
                                         <button class="btn btn-link text-success p-0 mx-1" title="Editar"
                                             data-bs-toggle="modal" data-bs-target="#modalEditarPaquete{{ $paquete->id }}">
                                             <span class="material-icons">edit</span>
                                         </button>
-                                    @endcan
+                                    
 
                                     @can('Eliminar paquetes')
                                         <button type="button" class="btn btn-link text-danger p-0 mx-1" title="Eliminar"

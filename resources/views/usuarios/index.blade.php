@@ -45,12 +45,12 @@
                                     @endforeach
                                 </td>
                                 <td class="align-middle text-center">
-                                    @can('Editar usuarios')
+                                    
                                         <button class="btn btn-link text-success p-0 mx-1" title="Editar"
                                             data-bs-toggle="modal" data-bs-target="#modalEditarUsuario{{ $user->id }}">
                                             <span class="material-icons">edit</span>
                                         </button>
-                                    @endcan
+                                    
 
                                     @can('Eliminar usuarios')
                                         <button type="button" class="btn btn-link text-danger p-0 mx-1" title="Eliminar"

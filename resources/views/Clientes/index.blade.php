@@ -50,12 +50,12 @@
                                         <p class="text-xs mb-0">{{ $cliente->referencias }}</p>
                                     </td>
                                     <td class="text-center">
-                                        @can('Editar clientes')
+                                        
                                             <button class="btn btn-link text-success p-0 mx-1 btn-modal" title="Editar"
                                                 data-url="{{ route('clientes.edit-modal', $cliente->id) }}">
                                                 <span class="material-icons">edit</span>
                                             </button>
-                                        @endcan
+                                        
                                         @can('Eliminar clientes')
                                             <button class="btn btn-link text-danger p-0 mx-1 btn-modal" title="Eliminar"
                                                 data-url="{{ route('clientes.delete-modal', $cliente->id) }}">

@@ -54,13 +54,13 @@
                                 </td>
                                 <td class="acciones-centro">
                                     @if(strtolower($role->name) !== 'superadmin')
-                                        @can('Editar roles')
+                                        
                                             <button class="btn btn-link text-secondary p-0 mx-1" title="Editar"
                                                 data-bs-toggle="modal" data-bs-target="#modalEditarRol{{ $role->id }}">
                                                 <span class="material-icons">edit</span>
                                             </button>
                                             @include('roles.modal-edit', ['role' => $role, 'permissions' => $permissions])
-                                        @endcan
+                                        
                                         @can('Eliminar roles')
                                             <button type="button" class="btn btn-link text-danger p-0 mx-1" title="Eliminar"
                                                 data-bs-toggle="modal" data-bs-target="#modalEliminarRol{{ $role->id }}">
