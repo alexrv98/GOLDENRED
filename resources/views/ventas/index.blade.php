@@ -82,6 +82,7 @@
                             <th>Usuario</th>
                             <th>Fecha Venta</th>
                             <th>Total</th>
+                            <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -91,6 +92,18 @@
                                 <td>{{ $venta->usuario->name }}</td>
                                 <td>{{ $venta->fecha_venta }}</td>
                                 <td>${{ number_format($venta->total, 2) }}</td>
+                                <td class="text-center">
+                                    <button class="btn btn-link text-info p-0 mx-1 btn-ver-venta" title="Ver"
+                                        data-id="{{ $venta->id }}" data-bs-toggle="modal" data-bs-target="#modalDetalleVenta">
+                                        <span class="material-icons">visibility</span>
+                                    </button>
+                                    <button type="button" class="btn btn-link text-danger p-0 mx-1 btn-modal-eliminar"
+                                        data-id="{{ $venta->id }}" data-cliente="{{ $venta->cliente->nombre }}"
+                                        title="Eliminar">
+                                        <span class="material-icons">delete_forever</span>
+                                    </button>
+                                </td>
+
                             </tr>
                         @endforeach
                     </tbody>
@@ -103,5 +116,9 @@
     @include('ventas.partials.scripts')
     @include('ventas.partials.modal-confirmacion')
     @include('components.alert-toast')
+    @include('ventas_historial.partials.modal-confirmacion')
+    @include('ventas_historial.partials.scripts')
+    @include('ventas_historial.partials.modal-eliminar')
+
 
 </x-layout>

@@ -45,12 +45,28 @@ Route::middleware(['auth', NoCache::class,])->group(function () {
 
     Route::resource('paquetes', PaquetesController::class);
     
-    Route::resource( 'ventas', VentasController::class);
+    Route::resource('ventas', VentasController::class)->except(['show']);
+
+    Route::get('historial', [VentasController::class, 'historial'])->name('ventas.historial');
+    Route::get('corte', [VentasController::class, 'corte'])->name('ventas.corte');
+
+
 
 
 
 });
 
 
+Route::get('/api/ventas/{venta}', function (App\Models\Venta $venta) {
+    return response()->json([
+        'cliente' => $venta->cliente->nombre,
+        'paquete' => optional($venta->cliente->paquete)->nombre ?? 'N/A',
+        'meses' => $venta->meses,
+        'descuento' => $venta->descuento,
+        'recargo_domicilio' => $venta->recargo_domicilio,
+        'recargo_falta_pago' => $venta->recargo_falta_pagon ?? 0,
+        'total' => $venta->total,
+    ]);
+});
 
 require __DIR__ . '/auth.php';

@@ -164,4 +164,47 @@ $periodoFin = $periodoInicio->copy()->addMonthsNoOverflow($meses);
 
         return redirect()->route('ventas.index')->with('success', 'Venta registrada correctamente.');
     }
+        public function historial()
+    {
+        $ventas = Venta::with(['cliente', 'usuario'])
+            ->orderBy('fecha_venta', 'desc')
+            ->paginate(20); // Puedes ajustar la paginación
+
+        return view('ventas_historial.index', compact('ventas'));
+    }
+
+    public function corte()
+    {
+        $ventasHoy = Venta::whereDate('fecha_venta', now())->get();
+        $total = $ventasHoy->sum('total');
+
+        return view('ventas_corte.index', compact('ventasHoy', 'total'));
+    }
+
+    public function obtenerVenta($id)
+{
+    $venta = Venta::with('cliente', 'usuario')->findOrFail($id);
+
+    return response()->json([
+        'cliente' => $venta->cliente->nombre,
+        'paquete' => $venta->cliente->paquete->nombre ?? 'Sin paquete',
+        'meses' => $venta->meses,
+        'descuento' => $venta->descuento,
+        'recargo_domicilio' => $venta->recargo_domicilio,
+        'recargo_falta_pago' => $venta->recargo_falta_pago ?? 0,
+        'total' => $venta->total
+    ]);
+}
+
+
+public function destroy($id)
+{
+    $venta = Venta::findOrFail($id);
+    $venta->delete();
+
+    return redirect()->route('ventas.historial')->with('success', 'Venta eliminada correctamente.');
+}
+
+
+
 }
