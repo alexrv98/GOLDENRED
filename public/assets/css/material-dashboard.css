@@ -5,7 +5,7 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
 
- 
+
 
  .text-bg-success {
   background-color: #4caf50 !important; /* Verde Bootstrap por defecto */
@@ -15300,7 +15300,11 @@ hr.horizontal {
   content: "\f107";
   margin-left: auto;
   color: rgba(206, 212, 218, 0.7);
-  transition: all 0.2s ease-in-out; }
+  transition: transform 0.3s ease;
+  font-family: 'Material Icons Round';
+  content: 'expand_more';
+  font-size: 20px;
+  margin-left: auto; }
   @media (prefers-reduced-motion: reduce) {
     .navbar-vertical .navbar-nav .nav-link[data-bs-toggle="collapse"]:after {
       transition: none; } }

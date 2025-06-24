@@ -40,6 +40,7 @@
                             <i class="material-icons opacity-10">group</i>
                         </div>
                         <span class="nav-link-text ms-1">Usuarios</span>
+                        
                     </a>
                     <div class="collapse {{ in_array($activePage, ['usuarios', 'actividades', 'Roles']) ? 'show' : '' }}"
                         id="usuariosSubmenu">
