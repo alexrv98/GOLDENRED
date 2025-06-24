@@ -1,5 +1,15 @@
 @props(['activePage'])
 
+@php
+    $permisosUsuarios = ['Ver usuarios', 'Ver roles', 'Ver actividades'];
+    $tienePermiso = false;
+    foreach ($permisosUsuarios as $permiso) {
+        if (auth()->user()->can($permiso)) {
+            $tienePermiso = true;
+            break;
+        }
+    }
+@endphp
 
 <aside
     class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-dark"
@@ -31,53 +41,56 @@
                 </a>
             </li>
 
-            @can('Ver usuarios')
+            @if($tienePermiso)
                 <li class="nav-item">
-                    <a class="nav-link text-white {{ in_array($activePage, ['usuarios', 'actividades', 'Roles']) ? 'active bg-gradient-primary' : '' }}"
+                    <a class="nav-link text-white {{ in_array($activePage, ['usuarios', 'actividades', 'roles']) ? 'active bg-gradient-primary' : '' }}"
                         data-bs-toggle="collapse" href="#usuariosSubmenu" role="button" aria-expanded="false"
                         aria-controls="usuariosSubmenu">
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">group</i>
                         </div>
                         <span class="nav-link-text ms-1">Usuarios</span>
-                        
                     </a>
-                    <div class="collapse {{ in_array($activePage, ['usuarios', 'actividades', 'Roles']) ? 'show' : '' }}"
+                    <div class="collapse {{ in_array($activePage, ['usuarios', 'actividades', 'roles']) ? 'show' : '' }}"
                         id="usuariosSubmenu">
                         <ul class="nav ms-4 flex-column">
-                            <li class="nav-item">
-                                <a class="nav-link text-white {{ $activePage == 'usuarios' ? 'active' : '' }}"
-                                    href="{{ route('usuarios.index') }}">
-                                    <div class="d-flex align-items-center">
-                                        <i class="material-icons opacity-10 me-2">person</i>
-                                        <span class="nav-link-text">Ver usuarios</span>
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white {{ $activePage == 'Roles' ? 'active' : '' }}"
-                                    href="{{ route('roles.index') }}">
-                                    <div class="d-flex align-items-center">
-                                        <i class="material-icons opacity-10 me-2">admin_panel_settings</i>
-                                        <span class="nav-link-text">Ver Roles</span>
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white {{ $activePage == 'actividades' ? 'active' : '' }}"
-                                    href="{{ route('actividades.index') }}">
-                                    <div class="d-flex align-items-center">
-                                        <i class="material-icons opacity-10 me-2">history</i>
-                                        <span class="nav-link-text">Ver accesos</span>
-                                    </div>
-                                </a>
-                            </li>
+                            @can('Ver usuarios')
+                                <li class="nav-item">
+                                    <a class="nav-link text-white {{ $activePage == 'usuarios' ? 'active' : '' }}"
+                                        href="{{ route('usuarios.index') }}">
+                                        <div class="d-flex align-items-center">
+                                            <i class="material-icons opacity-10 me-2">person</i>
+                                            <span class="nav-link-text">Ver usuarios</span>
+                                        </div>
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('Ver roles')
+                                <li class="nav-item">
+                                    <a class="nav-link text-white {{ $activePage == 'roles' ? 'active' : '' }}"
+                                        href="{{ route('roles.index') }}">
+                                        <div class="d-flex align-items-center">
+                                            <i class="material-icons opacity-10 me-2">admin_panel_settings</i>
+                                            <span class="nav-link-text">Ver Roles</span>
+                                        </div>
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('Ver actividades')
+                                <li class="nav-item">
+                                    <a class="nav-link text-white {{ $activePage == 'actividades' ? 'active' : '' }}"
+                                        href="{{ route('actividades.index') }}">
+                                        <div class="d-flex align-items-center">
+                                            <i class="material-icons opacity-10 me-2">history</i>
+                                            <span class="nav-link-text">Ver accesos</span>
+                                        </div>
+                                    </a>
+                                </li>
+                            @endcan
                         </ul>
                     </div>
                 </li>
-            @endcan
-
-
+            @endif
 
             @can('Ver clientes')
                 <li class="nav-item">
