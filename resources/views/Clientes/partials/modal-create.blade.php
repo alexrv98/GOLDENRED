@@ -49,7 +49,7 @@
             {{-- Paquete --}}
             <div class="col-md-4 mb-3">
               <label class="form-label fw-bold text-dark">Paquete</label>
-              <select name="paquete_id" class="form-select border">
+              <select name="paquete_id" class="form-select border" required>
                 <option value="">-- Selecciona un paquete --</option>
                 @foreach($paquetes as $paquete)
           <option value="{{ $paquete->id }}">{{ $paquete->nombre }}</option>
@@ -57,14 +57,14 @@
               </select>
             </div>
             <div class="col-md-4 mb-3">
-  <label class="form-label fw-bold text-dark">Torre</label>
-  <input type="text" name="torre" class="form-control border" value="{{ $cliente->torre }}">
-</div>
+              <label class="form-label fw-bold text-dark">Torre</label>
+              <input type="text" name="torre" class="form-control border" value="{{ $cliente->torre }}">
+            </div>
 
-<div class="col-md-4 mb-3">
-  <label class="form-label fw-bold text-dark">Panel</label>
-  <input type="text" name="panel" class="form-control border" value="{{ $cliente->panel }}">
-</div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label fw-bold text-dark">Panel</label>
+              <input type="text" name="panel" class="form-control border" value="{{ $cliente->panel }}">
+            </div>
 
 
             {{-- Dirección MAC --}}

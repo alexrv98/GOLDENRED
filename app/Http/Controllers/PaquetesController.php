@@ -32,6 +32,7 @@ class PaquetesController extends Controller
         $request->validate([
             'nombre' => 'required|string|max:100|unique:paquetes,nombre',
             'precio' => 'required|numeric|min:0',
+            
         ]);
 
         Paquete::create($request->all());
