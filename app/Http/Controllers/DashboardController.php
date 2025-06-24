@@ -39,30 +39,28 @@ class DashboardController extends Controller
         ];
 
         return [
-            'ventasMensuales' => $this->getVentasDelMes($request),
+            'ventasMensuales' => $this->getVentasDelMesActual(),
             'ventasAnuales' => $this->getVentasAnuales(),
             'clientesTotales' => $this->getClientesTotales(),
             'clientesConDeuda' => $this->getClientesConDeuda(),
             'clientesPagados' => $this->getClientesPagados(),
             'clientesPendientesPago' => $this->getClientesPendientesDePago(),
-            'mesSeleccionado' => $request->input('mes', now()->month),
+            'mesActual' => now()->month,
             'meses' => $meses,
             'ventasPorMes' => collect($meses)->keys()->map(function ($mes) {
-    return Venta::whereMonth('periodo_inicio', $mes)
-        ->whereYear('periodo_inicio', now()->year)
-        ->sum('total');
-})->values(),
+                return Venta::whereMonth('periodo_inicio', $mes)
+                    ->whereYear('periodo_inicio', now()->year)
+                    ->sum('total');
+            })->values(),
+            
 
         ];
     }
 
-    protected function getVentasDelMes(Request $request): float
+    protected function getVentasDelMesActual(): float
     {
-        $mes = $request->input('mes', now()->month);
-        $año = now()->year;
-
-        return Venta::whereMonth('periodo_inicio', $mes)
-            ->whereYear('periodo_inicio', $año)
+        return Venta::whereMonth('periodo_inicio', now()->month)
+            ->whereYear('periodo_inicio', now()->year)
             ->sum('total');
     }
 

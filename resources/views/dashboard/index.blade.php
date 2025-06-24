@@ -5,22 +5,6 @@
 
         <div class="container-fluid py-4">
 
-            <!-- Selector de mes -->
-            <!-- <form method="GET" action="{{ route('alt-dashboard') }}" class="mb-4">
-                <div class="row align-items-center">
-                    <div class="col-md-4">
-                        <label for="mes" class="form-label">Seleccionar mes:</label>
-                        <select name="mes" id="mes" class="form-select" onchange="this.form.submit()">
-                            @foreach ($meses as $num => $nombre)
-                                <option value="{{ $num }}" {{ $mesSeleccionado == $num ? 'selected' : '' }}>
-                                    {{ $nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-            </form> -->
-
             <!-- Cards -->
             <div class="row">
                 <!-- Ventas del Mes -->
@@ -33,14 +17,14 @@
                             </div>
                             <div class="text-end pt-1">
                                 <p class="text-sm mb-0 text-capitalize">
-                                    Ventas en
-                                    {{ (isset($mesSeleccionado) && array_key_exists($mesSeleccionado, $meses)) ? $meses[$mesSeleccionado] : 'Mes inválido' }}
+                                    Ventas en {{ $meses[$mesActual] ?? 'Mes inválido' }}
                                 </p>
                                 <h4 class="mb-0">${{ number_format($ventasMensuales, 2) }}</h4>
                             </div>
                         </div>
                     </div>
                 </div>
+
 
                 <!-- Ventas Anuales -->
                 <div class="col-xl-3 col-sm-6 mb-4">
