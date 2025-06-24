@@ -17,7 +17,7 @@
                             </div>
                             <div class="text-end pt-1">
                                 <p class="text-sm mb-0 text-capitalize">
-                                    Ventas en {{ $meses[$mesActual] ?? 'Mes inválido' }}
+                                    Ventas en {{ isset($mesActual) && isset($meses[$mesActual]) ? $meses[$mesActual] : 'Mes inválido' }}
                                 </p>
                                 <h4 class="mb-0">${{ number_format($ventasMensuales, 2) }}</h4>
                             </div>

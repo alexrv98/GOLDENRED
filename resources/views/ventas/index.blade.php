@@ -13,6 +13,8 @@
                 <div class="col-md-8 mb-3 position-relative">
                     <label class="form-label fw-bold text-dark">Buscar Cliente por Nombre</label>
                     <select id="busqueda_cliente" class="form-control"></select>
+                    <small id="estadoCliente" class="text-muted d-block mt-1"></small>
+
                     <input type="hidden" name="cliente_id" id="cliente_id">
                 </div>
 
@@ -51,8 +53,9 @@
                             <label>Recargo falta pago</label>
                             <input type="number" name="recargo_falta_pago" id="recargo_falta_pago" class="form-control"
                                 readonly>
-                            <small id="info_falta_pago" class="text-muted"></small>
+                            <small id="info_falta_pago" class="d-block mt-1"></small>
                         </div>
+
                         <div class="col-md-4">
                             <label>Subtotal</label>
                             <input type="number" id="subtotal" class="form-control" readonly>

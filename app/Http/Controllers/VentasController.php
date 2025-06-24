@@ -189,6 +189,59 @@ class VentasController extends Controller
         return [$diasAtraso, $recargo];
     }
 
+    public function estadoCliente($clienteId)
+    {
+        $cliente = Cliente::with('ventas')->findOrFail($clienteId);
+        $hoy = now()->startOfDay();
+        $diaCobro = $cliente->dia_cobro ?? 1;
+
+        // Si tiene ventas
+        $ultimaVenta = $cliente->ventas->sortByDesc('fecha_venta')->first();
+        if ($ultimaVenta) {
+            $periodoFin = Carbon::parse($ultimaVenta->periodo_fin)->startOfDay();
+
+            if ($hoy->lt($periodoFin)) {
+                $diasRestantes = $hoy->diffInDays($periodoFin);
+                if ($diasRestantes <= 5) {
+                    return response()->json([
+                        'estado' => 'proximo',
+                        'mensaje' => "Cliente próximo a pagar. Fecha límite: {$periodoFin->format('d/m/Y')}"
+                    ]);
+                } else {
+                    return response()->json([
+                        'estado' => 'corriente',
+                        'mensaje' => "Cliente al corriente. Próxima fecha de pago: {$periodoFin->format('d/m/Y')}"
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'estado' => 'atrasado',
+                    'mensaje' => "Cliente con atraso desde: {$periodoFin->format('d/m/Y')}"
+                ]);
+            }
+        }
+
+        // Si NO tiene ventas
+        $referencia = $hoy->copy()->day($diaCobro);
+        if ($hoy->day <= $diaCobro) {
+            $referencia->subMonthNoOverflow();
+        }
+
+        $primerDiaAtraso = $referencia->copy()->addDay();
+
+        if ($hoy->gte($primerDiaAtraso)) {
+            return response()->json([
+                'estado' => 'atrasado',
+                'mensaje' => "Cliente con atraso desde su día de cobro: {$referencia->format('d/m/Y')}"
+            ]);
+        } else {
+            return response()->json([
+                'estado' => 'corriente',
+                'mensaje' => "Cliente al corriente. Día de cobro: {$referencia->format('d/m/Y')}"
+            ]);
+        }
+    }
+
 
 
     public function destroy($id)

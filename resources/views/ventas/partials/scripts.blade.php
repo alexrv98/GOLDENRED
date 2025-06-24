@@ -1,9 +1,7 @@
-<!-- 📌 Agrega estas dependencias antes de tu script -->
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-<!-- ✅ Tu script que usa Select2 -->
 <script>
     $(document).ready(function () {
         $('#busqueda_cliente').select2({
@@ -13,24 +11,19 @@
                 url: '/ventas/buscar-clientes',
                 dataType: 'json',
                 delay: 250,
-                data: params => ({
-                    q: params.term
-                }),
-                processResults: data => ({
-                    results: data.results
-                }),
+                data: params => ({ q: params.term }),
+                processResults: data => ({ results: data.results }),
                 cache: true
             }
         });
 
         $('#busqueda_cliente').on('select2:select', function (e) {
             const data = e.params.data;
+            const clienteId = data.id;
 
-            // Ocultar dropdown inmediatamente
             $(this).select2('close');
 
-            // Rellenar campos
-            $('#cliente_id').val(data.id);
+            $('#cliente_id').val(clienteId);
             $('#nombre_cliente').val(data.text);
             $('#nombre_paquete').val(data.paquete.nombre);
             $('#precio_paquete').val(data.paquete.precio);
@@ -39,12 +32,34 @@
             $('#descuento').val(0);
             $('#recargo_domicilio').val(0);
             $('#recargo_falta_pago').val(0);
-            $('#info_falta_pago').text('');
+
+            const info = $('#info_falta_pago');
+            info.hide().removeClass('text-danger text-success').text('');
 
             $('#datosCliente').removeClass('d-none');
 
-            obtenerRecargoReal(data.id);
+            obtenerRecargoReal(clienteId);
             calcularTotal();
+
+            fetch(`/ventas/estado-cliente/${clienteId}`)
+                .then(res => res.json())
+                .then(data => {
+                    const estadoDiv = $('#estadoCliente');
+                    estadoDiv
+                        .hide()
+                        .removeClass('text-success text-warning text-danger')
+                        .addClass('d-block');
+
+                    let colorClass = 'text-muted';
+                    if (data.estado === 'corriente') colorClass = 'text-success';
+                    else if (data.estado === 'proximo') colorClass = 'text-warning';
+                    else if (data.estado === 'atrasado') colorClass = 'text-danger';
+
+                    estadoDiv
+                        .attr('class', 'text-sm mt-1 ' + colorClass)
+                        .text(data.mensaje)
+                        .fadeIn(300);
+                });
         });
 
         ['meses', 'descuento', 'recargo_domicilio', 'recargo_falta_pago'].forEach(id => {
@@ -69,12 +84,24 @@
                 .then(res => res.json())
                 .then(data => {
                     $('#recargo_falta_pago').val(data.recargo.toFixed(2));
-                    $('#info_falta_pago').text(
-                        data.dias_atraso > 0 ? `Días de atraso: ${data.dias_atraso}` : 'Sin atraso'
-                    );
+
+                    const info = $('#info_falta_pago');
+                    info
+                        .hide()
+                        .removeClass('text-danger text-success');
+
+                    if (data.dias_atraso > 0) {
+                        info.text(`Días de atraso: ${data.dias_atraso}`).addClass('text-danger');
+                    } else {
+                        info.text('Sin atraso').addClass('text-success');
+                    }
+
+                    info.fadeIn(300);
+
                     calcularTotal();
                 });
         }
+
     });
 </script>
 <script>

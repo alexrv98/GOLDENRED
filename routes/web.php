@@ -12,8 +12,6 @@ use App\Http\Middleware\NoCache;
 use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\DashboardController;
 
-Route::get('/ventas/recargo/{cliente}', [VentasController::class, 'calcularRecargo']);
-Route::get('/ventas/buscar-clientes', [VentasController::class, 'buscarClientes'])->name('ventas.buscar-clientes');
 
 
 Route::get('/', function () {
@@ -46,13 +44,15 @@ Route::middleware(['auth', NoCache::class,])->group(function () {
     Route::resource('actividades', ActividadController::class);
 
     Route::resource('paquetes', PaquetesController::class);
-    
+
+    Route::get('/ventas/recargo/{cliente}', [VentasController::class, 'calcularRecargo']);
+    Route::get('/ventas/buscar-clientes', [VentasController::class, 'buscarClientes'])->name('ventas.buscar-clientes');
+    Route::get('/ventas/estado-cliente/{clienteId}', [VentasController::class, 'estadoCliente']);
+
     Route::resource('ventas', VentasController::class)->except(['show']);
 
     Route::get('historial', [VentasController::class, 'historial'])->name('ventas.historial');
     Route::get('corte', [VentasController::class, 'corte'])->name('ventas.corte');
-
-
 
 
 
