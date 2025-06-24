@@ -1,4 +1,5 @@
-<div class="modal fade" id="modalCrearRol" tabindex="-1" aria-labelledby="modalCrearRolLabel" aria-hidden="true" translate="no">
+<div class="modal fade" id="modalCrearRol" tabindex="-1" aria-labelledby="modalCrearRolLabel" aria-hidden="true"
+  translate="no">
   <div class="modal-dialog modal-lg">
     <div class="modal-content border-0 shadow-lg">
       <form action="{{ route('roles.store') }}" method="POST">
@@ -28,6 +29,8 @@
           <x-permission-section title="Clientes" :range="[10, 13]" />
           <x-permission-section title="Paquetes" :range="[14, 17]" />
           <x-permission-section title="Ventas" :range="[18, 21]" />
+          <x-permission-section title="Actividades/Accesos" :range="[22, 22]" />
+          
 
         </div>
 

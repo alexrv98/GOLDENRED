@@ -30,6 +30,8 @@
           <x-permission-section title="Clientes" :range="[10, 13]" :role="$role" />
           <x-permission-section title="Paquetes" :range="[14, 17]" :role="$role" />
           <x-permission-section title="Ventas" :range="[18, 21]" :role="$role" />
+          <x-permission-section title="Actividades/Accesos" :range="[22, 22]" :role="$role" />
+
         </div>
 
         <div class="modal-footer">

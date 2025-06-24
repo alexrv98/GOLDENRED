@@ -103,53 +103,49 @@
             @endcan
 
             @can('Ver ventas')
-    <li class="nav-item">
-        <a class="nav-link text-white {{ in_array($activePage, ['ventas', 'ventas_historial', 'ventas_corte']) ? 'active bg-gradient-primary' : '' }}"
-            data-bs-toggle="collapse" href="#ventasSubmenu" role="button" aria-expanded="false"
-            aria-controls="ventasSubmenu">
-            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                <i class="material-icons opacity-10">format_textdirection_r_to_l</i>
-            </div>
-            <span class="nav-link-text ms-1">Ventas</span>
-        </a>
-        <div class="collapse {{ in_array($activePage, ['ventas', 'ventas_historial', 'ventas_corte']) ? 'show' : '' }}"
-            id="ventasSubmenu">
-            <ul class="nav ms-4 flex-column">
                 <li class="nav-item">
-                    <a class="nav-link text-white {{ $activePage == 'ventas' ? 'active' : '' }}"
-                        href="{{ route('ventas.index') }}">
-                        <div class="d-flex align-items-center">
-                            <i class="material-icons opacity-10 me-2">add_shopping_cart</i>
-                            <span class="nav-link-text">Venta</span>
+                    <a class="nav-link text-white {{ in_array($activePage, ['ventas', 'ventas_historial', 'ventas_corte']) ? 'active bg-gradient-primary' : '' }}"
+                        data-bs-toggle="collapse" href="#ventasSubmenu" role="button" aria-expanded="false"
+                        aria-controls="ventasSubmenu">
+                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">format_textdirection_r_to_l</i>
                         </div>
+                        <span class="nav-link-text ms-1">Ventas</span>
                     </a>
+                    <div class="collapse {{ in_array($activePage, ['ventas', 'ventas_historial', 'ventas_corte']) ? 'show' : '' }}"
+                        id="ventasSubmenu">
+                        <ul class="nav ms-4 flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ $activePage == 'ventas' ? 'active' : '' }}"
+                                    href="{{ route('ventas.index') }}">
+                                    <div class="d-flex align-items-center">
+                                        <i class="material-icons opacity-10 me-2">add_shopping_cart</i>
+                                        <span class="nav-link-text">Venta</span>
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ $activePage == 'ventas_historial' ? 'active' : '' }}"
+                                    href="{{ route('ventas.historial') }}">
+                                    <div class="d-flex align-items-center">
+                                        <i class="material-icons opacity-10 me-2">history</i>
+                                        <span class="nav-link-text">Historial</span>
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ $activePage == 'ventas_corte' ? 'active' : '' }}"
+                                    href="{{ route('ventas.corte') }}">
+                                    <div class="d-flex align-items-center">
+                                        <i class="material-icons opacity-10 me-2">attach_money</i>
+                                        <span class="nav-link-text">Corte</span>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white {{ $activePage == 'ventas_historial' ? 'active' : '' }}"
-                        href="{{ route('ventas.historial') }}">
-                        <div class="d-flex align-items-center">
-                            <i class="material-icons opacity-10 me-2">history</i>
-                            <span class="nav-link-text">Historial</span>
-                        </div>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white {{ $activePage == 'ventas_corte' ? 'active' : '' }}"
-                        href="{{ route('ventas.corte') }}">
-                        <div class="d-flex align-items-center">
-                            <i class="material-icons opacity-10 me-2">attach_money</i>
-                            <span class="nav-link-text">Corte</span>
-                        </div>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </li>
-@endcan
-
-
-            
-
+            @endcan
         </ul>
     </div>
 

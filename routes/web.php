@@ -10,6 +10,7 @@ use App\Http\Controllers\ClientesController;
 use App\Http\Controllers\RolesController;
 use App\Http\Middleware\NoCache;
 use App\Http\Controllers\EquipoController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/ventas/recargo/{cliente}', [VentasController::class, 'calcularRecargo']);
 Route::get('/ventas/buscar-clientes', [VentasController::class, 'buscarClientes'])->name('ventas.buscar-clientes');
@@ -19,11 +20,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/alt-dashboard', function () {
-    return view('dashboard.index'); // resources/views/dashboard/index.blade.php
-})->middleware(['auth', 'verified', NoCache::class])->name('alt-dashboard');
 
 Route::middleware(['auth', NoCache::class,])->group(function () {
+
+    // Dashboard
+    Route::get('/alt-dashboard', DashboardController::class)->name('alt-dashboard');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
