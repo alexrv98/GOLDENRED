@@ -31,32 +31,14 @@ class VentasController extends Controller
 
     public function calcularRecargo(Cliente $cliente)
     {
-        $fechaHoy = now()->startOfDay();
-        $ultimaVenta = Venta::where('cliente_id', $cliente->id)->orderBy('fecha_venta', 'desc')->first();
-
-        $recargo_falta_pago = 0;
-        $diasAtraso = 0;
-
-        if ($ultimaVenta) {
-            $periodoFinAnterior = Carbon::parse($ultimaVenta->periodo_fin)->startOfDay();
-            $primerDiaDeAtraso = $periodoFinAnterior->copy()->addDay();
-
-            if ($fechaHoy->greaterThanOrEqualTo($primerDiaDeAtraso)) {
-                $diasAtraso = $primerDiaDeAtraso->diffInDays($fechaHoy) + 1;
-
-                if ($diasAtraso >= 1 && $diasAtraso <= 3) {
-                    $recargo_falta_pago = 40;
-                } elseif ($diasAtraso > 3) {
-                    $recargo_falta_pago = 140;
-                }
-            }
-        }
+        [$diasAtraso, $recargo_falta_pago] = $this->obtenerAtrasoYRecargo($cliente);
 
         return response()->json([
             'recargo' => $recargo_falta_pago,
             'dias_atraso' => $diasAtraso,
         ]);
     }
+
     public function buscarClientes(Request $request)
     {
         $search = $request->input('q');
@@ -79,8 +61,6 @@ class VentasController extends Controller
 
         return response()->json(['results' => $resultados]);
     }
-
-
 
 
     public function store(Request $request)
@@ -108,44 +88,26 @@ class VentasController extends Controller
             ->orderBy('fecha_venta', 'desc')
             ->first();
 
-        $recargo_falta_pago = 0;
-
-        if ($ultimaVenta) {
-            $periodoFinAnterior = Carbon::parse($ultimaVenta->periodo_fin)->startOfDay();
-            $primerDiaAtraso = $periodoFinAnterior->copy()->addDay();
-
-            if ($fechaHoy->gte($primerDiaAtraso)) {
-                $diasAtraso = $primerDiaAtraso->diffInDays($fechaHoy) + 1;
-
-                if ($diasAtraso >= 1 && $diasAtraso <= 3) {
-                    $recargo_falta_pago = 40;
-                } elseif ($diasAtraso > 3) {
-                    $recargo_falta_pago = 140;
-                }
-            }
-        }
+        [$diasAtraso, $recargo_falta_pago] = $this->obtenerAtrasoYRecargo($cliente);
 
         $total = $subtotal - ($request->descuento ?? 0) + ($request->recargo_domicilio ?? 0) + $recargo_falta_pago;
 
         $diaCobro = $cliente->dia_cobro ?? 1;
 
-if ($ultimaVenta) {
-    // 👉 Continuar justo después del periodo_fin anterior
-    $periodoInicio = Carbon::parse($ultimaVenta->periodo_fin)->startOfDay();
-} else {
-    // Primera venta: calcular desde el día de cobro más cercano a hoy
-    $hoy = now()->startOfDay();
-    $proximoCobro = $hoy->copy()->day($diaCobro);
+        if ($ultimaVenta) {
+            $periodoInicio = Carbon::parse($ultimaVenta->periodo_fin)->startOfDay();
+        } else {
+            $hoy = now()->startOfDay();
+            $proximoCobro = $hoy->copy()->day($diaCobro);
 
-    if ($hoy->day > $diaCobro) {
-        $proximoCobro->addMonthNoOverflow();
-    }
+            if ($hoy->day > $diaCobro) {
+                $proximoCobro->addMonthNoOverflow();
+            }
 
-    $periodoInicio = $proximoCobro;
-}
+            $periodoInicio = $proximoCobro;
+        }
 
-$periodoFin = $periodoInicio->copy()->addMonthsNoOverflow($meses);
-
+        $periodoFin = $periodoInicio->copy()->addMonthsNoOverflow($meses);
 
         Venta::create([
             'usuario_id' => Auth::id(),
@@ -164,7 +126,8 @@ $periodoFin = $periodoInicio->copy()->addMonthsNoOverflow($meses);
 
         return redirect()->route('ventas.index')->with('success', 'Venta registrada correctamente.');
     }
-        public function historial()
+
+    public function historial()
     {
         $ventas = Venta::with(['cliente', 'usuario'])
             ->orderBy('fecha_venta', 'desc')
@@ -182,28 +145,59 @@ $periodoFin = $periodoInicio->copy()->addMonthsNoOverflow($meses);
     }
 
     public function obtenerVenta($id)
-{
-    $venta = Venta::with('cliente', 'usuario')->findOrFail($id);
+    {
+        $venta = Venta::with('cliente', 'usuario')->findOrFail($id);
 
-    return response()->json([
-        'cliente' => $venta->cliente->nombre,
-        'paquete' => $venta->cliente->paquete->nombre ?? 'Sin paquete',
-        'meses' => $venta->meses,
-        'descuento' => $venta->descuento,
-        'recargo_domicilio' => $venta->recargo_domicilio,
-        'recargo_falta_pago' => $venta->recargo_falta_pago ?? 0,
-        'total' => $venta->total
-    ]);
-}
+        return response()->json([
+            'cliente' => $venta->cliente->nombre,
+            'paquete' => $venta->cliente->paquete->nombre ?? 'Sin paquete',
+            'meses' => $venta->meses,
+            'descuento' => $venta->descuento,
+            'recargo_domicilio' => $venta->recargo_domicilio,
+            'recargo_falta_pago' => $venta->recargo_falta_pago ?? 0,
+            'total' => $venta->total
+        ]);
+    }
+
+    private function obtenerAtrasoYRecargo(Cliente $cliente): array
+    {
+        $hoy = now()->startOfDay();
+        $ultimaVenta = Venta::where('cliente_id', $cliente->id)->orderBy('fecha_venta', 'desc')->first();
+
+        if ($ultimaVenta) {
+            $fechaBase = Carbon::parse($ultimaVenta->periodo_fin)->startOfDay();
+        } else {
+            $diaCobro = $cliente->dia_cobro ?? 1;
+            $fechaBase = $hoy->copy()->day($diaCobro);
+
+            if ($hoy->lt($fechaBase)) {
+                $fechaBase->subMonthNoOverflow();
+            }
+        }
+
+        $primerDiaAtraso = $fechaBase->copy()->addDay();
+
+        $diasAtraso = 0;
+        $recargo = 0;
+
+        if ($hoy->greaterThanOrEqualTo($primerDiaAtraso)) {
+            $diasAtraso = $primerDiaAtraso->diffInDays($hoy) + 1;
+
+            $recargo = $diasAtraso <= 3 ? 40 : 140;
+        }
+
+        return [$diasAtraso, $recargo];
+    }
 
 
-public function destroy($id)
-{
-    $venta = Venta::findOrFail($id);
-    $venta->delete();
 
-    return redirect()->route('ventas.historial')->with('success', 'Venta eliminada correctamente.');
-}
+    public function destroy($id)
+    {
+        $venta = Venta::findOrFail($id);
+        $venta->delete();
+
+        return redirect()->route('ventas.historial')->with('success', 'Venta eliminada correctamente.');
+    }
 
 
 
