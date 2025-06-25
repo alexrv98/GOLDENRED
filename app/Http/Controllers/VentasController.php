@@ -70,6 +70,8 @@ class VentasController extends Controller
             'meses' => 'required|integer|min:1|max:12',
             'descuento' => 'nullable|numeric|min:0',
             'recargo_domicilio' => 'nullable|numeric|min:0',
+            'tipo_pago' => 'required|in:Efectivo,Transferencia',
+
         ]);
 
         $cliente = Cliente::with('paquete')->findOrFail($request->cliente_id);
@@ -121,7 +123,9 @@ class VentasController extends Controller
             'subtotal' => $subtotal,
             'total' => $total,
             'periodo_inicio' => $periodoInicio,
-            'periodo_fin' => $periodoFin
+            'periodo_fin' => $periodoFin,
+            'tipo_pago' => $request->tipo_pago,
+
         ]);
 
         return redirect()->route('ventas.index')->with('success', 'Venta registrada correctamente.');

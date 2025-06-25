@@ -17,6 +17,7 @@ class Venta extends Model
         'descuento',
         'recargo_domicilio',
         'recargo_atraso',
+        'tipo_pago',
         'fecha_venta',
         'subtotal',
         'total',

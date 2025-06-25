@@ -27,6 +27,10 @@
                             <span>$<span id="resumen_descuento"></span></span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between">
+                            <span><strong>Tipo de pago:</strong></span>
+                            <span id="resumen_tipo_pago"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
                             <span><strong>Recargo Domicilio:</strong></span>
                             <span>$<span id="resumen_recargo_domicilio"></span></span>
                         </li>

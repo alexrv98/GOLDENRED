@@ -1,6 +1,7 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     $(document).ready(function () {
@@ -105,36 +106,34 @@
     });
 </script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const btnConfirmar = document.getElementById('btnConfirmarVenta');
-        const btnEnviar = document.getElementById('btnEnviarFormulario');
 
-        btnConfirmar.addEventListener('click', function () {
-            // Obtener valores
-            const cliente = document.getElementById('nombre_cliente').value || 'N/A';
-            const paquete = document.getElementById('nombre_paquete').value || 'N/A';
-            const meses = document.getElementById('meses').value || '0';
-            const descuento = parseFloat(document.getElementById('descuento').value || 0).toFixed(2);
-            const recargoDomicilio = parseFloat(document.getElementById('recargo_domicilio').value || 0).toFixed(2);
-            const recargoFaltaPago = parseFloat(document.getElementById('recargo_falta_pago').value || 0).toFixed(2);
-            const total = parseFloat(document.getElementById('total').value || 0).toFixed(2);
+    document.getElementById('btnConfirmarVenta').addEventListener('click', function () {
+    const clienteId = document.getElementById('cliente_id').value;
+    const tipoPago = document.getElementById('tipo_pago').value;
+    const meses = document.getElementById('meses').value;
 
-            // Colocar en el resumen
-            document.getElementById('resumen_cliente').textContent = cliente;
-            document.getElementById('resumen_paquete').textContent = paquete;
-            document.getElementById('resumen_meses').textContent = meses;
-            document.getElementById('resumen_descuento').textContent = descuento;
-            document.getElementById('resumen_recargo_domicilio').textContent = recargoDomicilio;
-            document.getElementById('resumen_recargo_falta_pago').textContent = recargoFaltaPago;
-            document.getElementById('resumen_total').textContent = total;
-
-            // Mostrar el modal
-            const modal = new bootstrap.Modal(document.getElementById('modalConfirmarVenta'));
-            modal.show();
+    if (!clienteId || !tipoPago || !meses) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Faltan datos',
+            text: 'Por favor, complete todos los campos obligatorios antes de continuar.',
+            confirmButtonText: 'Entendido'
         });
+        return;
+    }
 
-        btnEnviar.addEventListener('click', function () {
-            document.getElementById('formCrearVenta').submit();
-        });
-    });
+    // Mostrar resumen en el modal
+    document.getElementById('resumen_cliente').innerText = document.getElementById('nombre_cliente').value;
+    document.getElementById('resumen_paquete').innerText = document.getElementById('nombre_paquete').value;
+    document.getElementById('resumen_meses').innerText = meses;
+    document.getElementById('resumen_descuento').innerText = parseFloat(document.getElementById('descuento').value || 0).toFixed(2);
+    document.getElementById('resumen_tipo_pago').innerText = tipoPago;
+    document.getElementById('resumen_recargo_domicilio').innerText = parseFloat(document.getElementById('recargo_domicilio').value || 0).toFixed(2);
+    document.getElementById('resumen_recargo_falta_pago').innerText = parseFloat(document.getElementById('recargo_falta_pago').value || 0).toFixed(2);
+    document.getElementById('resumen_total').innerText = parseFloat(document.getElementById('total').value || 0).toFixed(2);
+
+    const modal = new bootstrap.Modal(document.getElementById('modalConfirmarVenta'));
+    modal.show();
+});
+
 </script>
