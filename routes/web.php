@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActividadController;
+use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\PaquetesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VentasController;
@@ -54,6 +55,7 @@ Route::middleware(['auth', NoCache::class,])->group(function () {
     Route::get('historial', [VentasController::class, 'historial'])->name('ventas.historial');
     Route::get('corte', [VentasController::class, 'corte'])->name('ventas.corte');
 
+    Route::resource('auditoria', AuditoriaController::class);
 
 
 });

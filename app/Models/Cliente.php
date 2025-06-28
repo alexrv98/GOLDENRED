@@ -4,16 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Models\Activity;
 
 class Cliente extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
-    /**
-     * Atributos asignables masivamente.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'nombre',
         'telefono1',
@@ -30,43 +28,54 @@ class Cliente extends Model
         'panel',
     ];
 
-    /**
-     * Casts de atributos.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'fecha_contrato' => 'date',
     ];
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('cliente')
+            ->logOnly([
+                'nombre',
+                'telefono1',
+                'telefono2',
+                'fecha_contrato',
+                'dia_cobro',
+                'paquete_id',
+                'Mac',
+                'IP',
+                'direccion',
+                'coordenadas',
+                'referencias',
+                'torre', 
+                'panel',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+
+
     /**
-     * Scope personalizado para listar campos básicos.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * Agrega datos personalizados al log (nombre del cliente).
      */
+    public function tapActivity(Activity $activity, string $eventName)
+    {
+        $activity->properties = $activity->properties->merge([
+            'cliente_nombre' => $this->nombre,
+        ]);
+    }
+
     public function scopeOnlyBasicFields($query)
     {
         return $query->select('id', 'nombre', 'telefono1', 'fecha_contrato');
     }
 
-    /**
-     * Relación con el modelo Paquete.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
     public function paquete()
     {
         return $this->belongsTo(Paquete::class);
     }
 
-    /**
-     * Relación con el modelo Equipo.
-     *
-     * Un cliente puede tener varios equipos.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function equipos()
     {
         return $this->hasMany(Equipo::class);
@@ -79,9 +88,7 @@ class Cliente extends Model
 
     public function ventaPendiente()
     {
-        // aquí va tu lógica de control para saber si ya pagó el mes actual
         $ultimaVenta = $this->ventas()->latest()->first();
         return !$ultimaVenta || $ultimaVenta->estado == 'pendiente';
     }
-
 }

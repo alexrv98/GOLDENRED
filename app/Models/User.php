@@ -6,47 +6,29 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Contracts\Activity;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, LogsActivity;
 
-    /**
-     * Los atributos que se pueden asignar masivamente.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
-        'password', // se permite actualizar pero no se mostrará
+        'password',
     ];
 
-    /**
-     * Los atributos que deben ocultarse en serializaciones.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Casts de atributos.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
 
-    /**
-     * Scope para solo traer name y email.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
     public function scopeOnlyBasicFields($query)
     {
         return $query->select('id', 'name', 'email');
@@ -57,4 +39,17 @@ class User extends Authenticatable
         return $this->hasMany(Actividad::class, 'usuario_id');
     }
 
+    /**
+     * Configuración de auditoría con Spatie
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('usuario')
+            ->logOnly(['name', 'email']) // no logueamos password por seguridad
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+
+ 
 }

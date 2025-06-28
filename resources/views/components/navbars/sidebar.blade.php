@@ -1,7 +1,7 @@
 @props(['activePage'])
 
 @php
-    $permisosUsuarios = ['Ver usuarios', 'Ver roles', 'Ver actividades'];
+    $permisosUsuarios = ['Ver usuarios', 'Ver roles', 'Ver actividades', 'Ver auditoria'];
     $tienePermiso = false;
     foreach ($permisosUsuarios as $permiso) {
         if (auth()->user()->can($permiso)) {
@@ -43,7 +43,7 @@
 
             @if($tienePermiso)
                 <li class="nav-item">
-                    <a class="nav-link text-white {{ in_array($activePage, ['usuarios', 'actividades', 'roles']) ? 'active bg-gradient-primary' : '' }}"
+                    <a class="nav-link text-white {{ in_array($activePage, ['usuarios', 'actividades', 'roles', 'auditoria']) ? 'active bg-gradient-primary' : '' }}"
                         data-bs-toggle="collapse" href="#usuariosSubmenu" role="button" aria-expanded="false"
                         aria-controls="usuariosSubmenu">
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -51,7 +51,7 @@
                         </div>
                         <span class="nav-link-text ms-1">Usuarios</span>
                     </a>
-                    <div class="collapse {{ in_array($activePage, ['usuarios', 'actividades', 'roles']) ? 'show' : '' }}"
+                    <div class="collapse {{ in_array($activePage, ['usuarios', 'actividades', 'roles', 'auditoria']) ? 'show' : '' }}"
                         id="usuariosSubmenu">
                         <ul class="nav ms-4 flex-column">
                             @can('Ver usuarios')
@@ -83,6 +83,17 @@
                                         <div class="d-flex align-items-center">
                                             <i class="material-icons opacity-10 me-2">history</i>
                                             <span class="nav-link-text">Ver accesos</span>
+                                        </div>
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('Ver auditoria')
+                                <li class="nav-item">
+                                    <a class="nav-link text-white {{ $activePage == 'auditoria' ? 'active' : '' }}"
+                                        href="{{ route('auditoria.index') }}">
+                                        <div class="d-flex align-items-center">
+                                            <i class="material-icons opacity-10 me-2">history</i>
+                                            <span class="nav-link-text">Ver auditoria</span>
                                         </div>
                                     </a>
                                 </li>

@@ -31,9 +31,11 @@ class EquipoController extends Controller
             'modelo_router' => 'required|string',
             'numero_serie_router' => 'required|string|unique:equipo',
         ]);
-
-        Equipo::create($request->all());
-
+    
+        // Guardamos en una variable para que Spatie pueda hacer el tracking
+        $equipo = Equipo::create($request->all());
+    
         return redirect()->route('equipos.index')->with('success', 'Equipo registrado correctamente.');
     }
+    
 }
