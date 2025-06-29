@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Venta;
 use App\Models\Cliente;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -18,7 +19,19 @@ class DashboardController extends Controller
             return view('dashboard.index', $dashboardData);
         }
 
-        return view('dashboard.limitado');
+        // Datos básicos para la vista limitada
+        $clientesDeHoy = Cliente::where('dia_cobro', now()->day)
+            ->where('activo', 1)
+            ->get();
+
+        $clientesAtrasados = Cliente::where('activo', 1)
+            ->get()
+            ->filter(function ($cliente) {
+                return $cliente->getEstadoPagoActual()['estado'] === 'atrasado';
+            });
+
+        return view('dashboard.limitado', compact('clientesDeHoy', 'clientesAtrasados'));
+
     }
 
     protected function getDashboardData(Request $request): array
@@ -38,6 +51,16 @@ class DashboardController extends Controller
             12 => 'Diciembre'
         ];
 
+        $clientesDeHoy = Cliente::where('dia_cobro', now()->day)
+            ->where('activo', 1)
+            ->get();
+
+        $clientesAtrasados = Cliente::where('activo', 1)
+            ->get()
+            ->filter(function ($cliente) {
+                return $cliente->getEstadoPagoActual()['estado'] === 'atrasado';
+            });
+
         return [
             'ventasMensuales' => $this->getVentasDelMesActual(),
             'ventasAnuales' => $this->getVentasAnuales(),
@@ -52,10 +75,12 @@ class DashboardController extends Controller
                     ->whereYear('periodo_inicio', now()->year)
                     ->sum('total');
             })->values(),
-            
-
+            'clientesDeHoy' => $clientesDeHoy,
+            'clientesAtrasados' => $clientesAtrasados,
         ];
     }
+
+
 
     protected function getVentasDelMesActual(): float
     {

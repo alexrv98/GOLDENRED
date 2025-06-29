@@ -37,7 +37,101 @@
                     "El secreto para salir adelante es comenzar." — Mark Twain
                 </blockquote>
                 </div>
+                
+                
+            </div>
+            
+        </div>
+        <!-- Tabla: Clientes de Hoy -->
+<div class="row mt-4 justify-content-center">
+    <div class="col-lg-11">
+        <div class="card shadow-sm">
+            <div class="card-header pb-0">
+                <h6 class="fw-bold text-center">Clientes de Hoy</h6>
+            </div>
+            <div class="card-body px-3 pt-0 pb-2">
+                <div class="table-responsive">
+                    <table id="tabla-clientes-hoy" class="table align-items-center mb-0">
+
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th class="text-center">Día de Cobro</th>
+                                <th>Teléfono 1</th>
+                                <th>Teléfono 2</th>
+                                <th>Estatus del Mes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($clientesDeHoy as $cliente)
+                                @php
+                                    $estado = $cliente->getEstadoPagoActual();
+                                    $badgeColor = match($estado['estado']) {
+                                        'corriente' => 'success',
+                                        'proximo' => 'warning',
+                                        'atrasado' => 'danger',
+                                        default => 'secondary'
+                                    };
+                                @endphp
+                                <tr>
+                                    <td>{{ $cliente->nombre }}</td>
+                                    <td class="text-center fw-bold" style="color: orange;">{{ $cliente->dia_cobro }}</td>
+                                    <td>{{ $cliente->telefono1 }}</td>
+                                    <td>{{ $cliente->telefono2 }}</td>
+                                    <td><span class="badge bg-{{ $badgeColor }}">{{ $estado['mensaje'] }}</span></td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="5" class="text-center text-secondary">No hay clientes activos para hoy.</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Tabla: Clientes con Pago Pendiente -->
+<div class="row mt-4 justify-content-center">
+    <div class="col-lg-11">
+        <div class="card shadow-sm">
+            <div class="card-header pb-0">
+                <h6 class="fw-bold text-center text-danger">Clientes con Pago Pendiente</h6>
+            </div>
+            <div class="card-body px-3 pt-0 pb-2">
+                <div class="table-responsive">
+                    <table id="tabla-clientes-atrasados" class="table align-items-center mb-0">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th class="text-center">Día de Cobro</th>
+                                <th>Teléfono 1</th>
+                                <th>Teléfono 2</th>
+                                <th>Último Mes Pagado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($clientesAtrasados as $cliente)
+                                @php $estado = $cliente->getEstadoPagoActual(); @endphp
+                                <tr>
+                                    <td>{{ $cliente->nombre }}</td>
+                                    <td class="text-center fw-bold" style="color: orange;">{{ $cliente->dia_cobro }}</td>
+                                    <td>{{ $cliente->telefono1 }}</td>
+                                    <td>{{ $cliente->telefono2 }}</td>
+                                    <td><span class="badge bg-danger">{{ $estado['mensaje'] }}</span></td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="5" class="text-center text-secondary">Todos los clientes están al corriente ✨</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
     </main>
+
+    @include('dashboard.partials.script')
 </x-layout>

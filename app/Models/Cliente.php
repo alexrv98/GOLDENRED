@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use Carbon\Carbon;
 use Spatie\Activitylog\Models\Activity;
 
 class Cliente extends Model
@@ -24,7 +25,7 @@ class Cliente extends Model
         'direccion',
         'coordenadas',
         'referencias',
-        'torre', 
+        'torre',
         'panel',
         'activo',
     ];
@@ -33,6 +34,29 @@ class Cliente extends Model
         'fecha_contrato' => 'date',
     ];
 
+    public function getEstadoPagoActual()
+    {
+        $hoy = now()->startOfDay();
+        $ultimaVenta = $this->ventas->sortByDesc('fecha_venta')->first();
+
+        if (!$ultimaVenta) {
+            return ['estado' => 'atrasado', 'mensaje' => 'Sin pagos registrados'];
+        }
+
+        $periodoFin = Carbon::parse($ultimaVenta->periodo_fin)->startOfDay();
+        $mesAnio = ucfirst($periodoFin->locale('es')->isoFormat('MMMM [de] YYYY'));
+
+        if ($hoy->lt($periodoFin)) {
+            $diasRestantes = $hoy->diffInDays($periodoFin);
+            if ($diasRestantes <= 5) {
+                return ['estado' => 'proximo', 'mensaje' => "Próximo a pagar. Cubierto hasta {$mesAnio}"];
+            } else {
+                return ['estado' => 'corriente', 'mensaje' => "Al corriente. Pagado hasta {$mesAnio}"];
+            }
+        }
+
+        return ['estado' => 'atrasado', 'mensaje' => "Atrasado. Último mes cubierto: {$mesAnio}"];
+    }
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -49,7 +73,7 @@ class Cliente extends Model
                 'direccion',
                 'coordenadas',
                 'referencias',
-                'torre', 
+                'torre',
                 'panel',
             ])
             ->logOnlyDirty()
