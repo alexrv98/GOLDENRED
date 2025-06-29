@@ -73,13 +73,15 @@
                                 readonly>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Meses</label>
-                            <select name="meses" id="meses" class="form-select border rounded-2 px-2" required>
-                                @for ($i = 1; $i <= 12; $i++)
-                                    <option value="{{ $i }}">{{ $i }}</option>
-                                @endfor
-                            </select>
-                        </div>
+    <label class="form-label">Meses</label>
+    <select name="meses" id="meses" class="form-select border rounded-2 px-2" required>
+        @for ($i = 1; $i <= 12; $i++)
+            <option value="{{ $i }}">{{ $i }}</option>
+        @endfor
+    </select>
+    <small id="promoMensaje" class="text-success mt-2 d-none"></small>
+</div>
+
                         <div class="col-md-4">
                             <label class="form-label">Tipo de Pago</label>
                             <select name="tipo_pago" id="tipo_pago" class="form-select border rounded-2 px-2" required>
@@ -206,6 +208,27 @@
             style="width:0;height:0;border:0;visibility:hidden;">
         </iframe>
     @endif
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const inputMeses = document.getElementById('meses');
+        const promoMensaje = document.getElementById('promoMensaje');
+
+        inputMeses.addEventListener('input', function () {
+            const valor = parseInt(this.value);
+
+            if (valor === 6) {
+                promoMensaje.textContent = '🎁 ¡Promoción activa! Pagas 6 meses y recibes 1 mes gratis.';
+                promoMensaje.classList.remove('d-none');
+            } else if (valor === 12) {
+                promoMensaje.textContent = '🎁 ¡Promoción activa! Pagas 12 meses y recibes 2 meses gratis.';
+                promoMensaje.classList.remove('d-none');
+            } else {
+                promoMensaje.classList.add('d-none');
+                promoMensaje.textContent = '';
+            }
+        });
+    });
+</script>
 
 
 
