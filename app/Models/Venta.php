@@ -89,4 +89,11 @@ class Venta extends Model
             ]);
         }
     }
+    protected $casts = [
+    'fecha_venta' => 'datetime',
+    'periodo_inicio' => 'datetime',
+    'periodo_fin' => 'datetime',
+];
+
+
 }

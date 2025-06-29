@@ -12,6 +12,7 @@ use App\Http\Controllers\RolesController;
 use App\Http\Middleware\NoCache;
 use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TicketController;
 
 
 
@@ -72,5 +73,10 @@ Route::get('/api/ventas/{venta}', function (App\Models\Venta $venta) {
         'total' => $venta->total,
     ]);
 });
+Route::get('/ticket/imprimir/{venta}', [TicketController::class, 'imprimible'])->name('ticket.imprimible');
+
+
+
+
 
 require __DIR__ . '/auth.php';

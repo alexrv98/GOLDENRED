@@ -71,7 +71,6 @@ class VentasController extends Controller
             'descuento' => 'nullable|numeric|min:0',
             'recargo_domicilio' => 'nullable|numeric|min:0',
             'tipo_pago' => 'required|in:Efectivo,Transferencia',
-
         ]);
 
         $cliente = Cliente::with('paquete')->findOrFail($request->cliente_id);
@@ -111,7 +110,7 @@ class VentasController extends Controller
 
         $periodoFin = $periodoInicio->copy()->addMonthsNoOverflow($meses);
 
-        Venta::create([
+        $venta = Venta::create([
             'usuario_id' => Auth::id(),
             'cliente_id' => $cliente->id,
             'estado' => 'pagado',
@@ -125,10 +124,12 @@ class VentasController extends Controller
             'periodo_inicio' => $periodoInicio,
             'periodo_fin' => $periodoFin,
             'tipo_pago' => $request->tipo_pago,
-
         ]);
 
-        return redirect()->route('ventas.index')->with('success', 'Venta registrada correctamente.');
+        return redirect()->route('ventas.index')
+    ->with('venta_id_para_imprimir', $venta->id);
+
+
     }
 
     public function historial()

@@ -159,5 +159,13 @@
     @include('ventas_historial.partials.scripts')
     @include('ventas_historial.partials.modal-eliminar')
 
+    @if(session('venta_id_para_imprimir'))
+    <iframe
+        src="{{ route('ticket.imprimible', session('venta_id_para_imprimir')) }}"
+        style="width:0;height:0;border:0;visibility:hidden;">
+    </iframe>
+@endif
+
+
 
 </x-layout>
