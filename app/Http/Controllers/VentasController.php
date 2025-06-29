@@ -10,24 +10,26 @@ use Carbon\Carbon;
 
 class VentasController extends Controller
 {
-    public function index()
-    {
-        // Cargar clientes con paquete (y última venta para info si quieres)
-        $clientes = Cliente::with([
-            'paquete',
-            'ventas' => function ($q) {
-                $q->orderBy('fecha_venta', 'desc')->limit(1);
-            }
-        ])->get();
+    public function index(Request $request)
+{
+    $clientes = Cliente::with([
+        'paquete',
+        'ventas' => fn($q) => $q->orderBy('fecha_venta', 'desc')->limit(1)
+    ])->get();
 
-        // Ventas de hoy para historial
-        $ventasHoy = Venta::with(['cliente', 'usuario'])
-            ->whereDate('fecha_venta', today())
-            ->orderBy('fecha_venta', 'desc')
-            ->get();
+    $ventasHoy = Venta::with(['cliente', 'usuario'])
+        ->whereDate('fecha_venta', today())
+        ->orderBy('fecha_venta', 'desc')
+        ->get();
 
-        return view('ventas.index', compact('clientes', 'ventasHoy'));
+    $ventaEditar = null;
+    if ($request->has('editar')) {
+        $ventaEditar = Venta::with('cliente.paquete')->find($request->editar);
     }
+
+    return view('ventas.index', compact('clientes', 'ventasHoy', 'ventaEditar'));
+}
+
 
     public function calcularRecargo(Cliente $cliente)
     {
@@ -276,6 +278,37 @@ class VentasController extends Controller
             ]);
         }
     }
+
+ public function update(Request $request, Venta $venta)
+{
+    $request->validate([
+        'meses' => 'required|integer|min:1|max:12',
+        'tipo_pago' => 'required|in:Efectivo,Transferencia',
+        'descuento' => 'nullable|numeric|min:0',
+        'recargo_domicilio' => 'nullable|numeric|min:0',
+        'recargo_falta_pago' => 'nullable|numeric|min:0',
+    ]);
+
+    // Obtener precio base del paquete del cliente
+    $precioBase = $venta->cliente->paquete->precio ?? 0;
+
+    // Calcular subtotal y total de forma segura
+    $subtotal = $precioBase * $request->meses;
+    $total = $subtotal - $request->descuento + $request->recargo_domicilio + $request->recargo_falta_pago;
+
+    // Actualizar la venta
+    $venta->update([
+        'meses' => $request->meses,
+        'tipo_pago' => $request->tipo_pago,
+        'descuento' => $request->descuento,
+        'recargo_domicilio' => $request->recargo_domicilio,
+        'recargo_falta_pago' => $request->recargo_falta_pago,
+        'total' => $total,
+    ]);
+
+    return redirect()->route('ventas.index')
+        ->with('success', 'Venta actualizada correctamente ✨');
+}
 
 
 

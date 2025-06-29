@@ -57,6 +57,8 @@ Route::middleware(['auth', NoCache::class,])->group(function () {
     Route::get('corte', [VentasController::class, 'corte'])->name('ventas.corte');
 
     Route::resource('auditoria', AuditoriaController::class);
+    Route::put('/ventas/{venta}', [VentasController::class, 'update'])->name('ventas.update');
+
 
 
 });

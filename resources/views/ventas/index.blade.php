@@ -7,7 +7,14 @@
         <div class="card m-4 p-4">
             <h5>Generar Venta</h5>
 
-            <form id="formCrearVenta" action="{{ route('ventas.store') }}" method="POST">
+            <form id="formCrearVenta"
+                action="{{ $ventaEditar ? route('ventas.update', $ventaEditar->id) : route('ventas.store') }}"
+                method="POST">
+                @csrf
+
+                @if($ventaEditar)
+                    @method('PUT')
+                @endif
                 @csrf
 
                 {{-- Buscar Cliente --}}
@@ -22,6 +29,19 @@
 
                 <div id="datosCliente" class="border-top pt-3">
                     {{-- Información Cliente --}}
+                    @if($ventaEditar)
+                        <div class="d-flex justify-content-between align-items-center alert alert-warning mb-3">
+                            <div>
+                                <span class="material-icons-round me-2 align-middle">edit_note</span>
+                                Estás editando una venta existente.
+                            </div>
+                            <a href="{{ route('ventas.index') }}" class="btn btn-sm btn-outline-secondary">
+                                <span class="material-icons-round align-middle me-1">undo</span> Cancelar edición
+                            </a>
+                        </div>
+                    @endif
+
+
                     <div class="row mb-3">
                         <div class="col-md-12">
                             <label class="form-label">
@@ -110,8 +130,10 @@
                     {{-- Botón --}}
                     <div class="text-end">
                         <button type="button" id="btnConfirmarVenta" class="btn btn-primary">
-                            <span class="material-icons-round align-middle me-1">check_circle</span> Generar Venta
+                            <span class="material-icons-round align-middle me-1">check_circle</span>
+                            {{ $ventaEditar ? 'Actualizar Venta' : 'Generar Venta' }}
                         </button>
+
                     </div>
                 </div>
             </form>
@@ -151,6 +173,11 @@
                                         data-id="{{ $venta->id }}" data-bs-toggle="modal" data-bs-target="#modalDetalleVenta">
                                         <span class="material-icons">visibility</span>
                                     </button>
+                                    <a href="{{ route('ventas.index', ['editar' => $venta->id]) }}"
+                                        class="btn btn-link text-warning p-0 mx-1" title="Editar">
+                                        <span class="material-icons">edit</span>
+                                    </a>
+
                                     <button type="button" class="btn btn-link text-danger p-0 mx-1 btn-modal-eliminar"
                                         data-id="{{ $venta->id }}" data-cliente="{{ $venta->cliente->nombre }}"
                                         title="Eliminar">

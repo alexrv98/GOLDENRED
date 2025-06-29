@@ -172,3 +172,22 @@
         });
     });
 </script>
+@if($ventaEditar)
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    $('#cliente_id').val({{ $ventaEditar->cliente->id }});
+    $('#nombre_cliente').val(@json($ventaEditar->cliente->nombre));
+    $('#nombre_paquete').val(@json($ventaEditar->cliente->paquete->nombre ?? 'Sin paquete'));
+    $('#precio_paquete').val({{ $ventaEditar->cliente->paquete->precio ?? 0 }});
+    $('#meses').val({{ $ventaEditar->meses }});
+    $('#tipo_pago').val(@json($ventaEditar->tipo_pago));
+    $('#descuento').val({{ $ventaEditar->descuento }});
+    $('#recargo_domicilio').val({{ $ventaEditar->recargo_domicilio }});
+    $('#recargo_falta_pago').val({{ $ventaEditar->recargo_falta_pago ?? 0 }});
+    $('#dia_pago').val({{ $ventaEditar->cliente->dia_cobro ?? 1 }});
+    $('#datosCliente').removeClass('d-none');
+
+    calcularTotal(); 
+});
+</script>
+@endif
