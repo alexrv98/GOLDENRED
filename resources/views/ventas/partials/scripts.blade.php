@@ -28,11 +28,14 @@
             $('#nombre_cliente').val(data.text);
             $('#nombre_paquete').val(data.paquete.nombre);
             $('#precio_paquete').val(data.paquete.precio);
+            $('#dia_pago').val(data.dia_pago); 
+
 
             $('#meses').val(1);
             $('#descuento').val(0);
             $('#recargo_domicilio').val(0);
             $('#recargo_falta_pago').val(0);
+            
 
             const info = $('#info_falta_pago');
             info.hide().removeClass('text-danger text-success').text('');
@@ -91,11 +94,27 @@
                         .hide()
                         .removeClass('text-danger text-success');
 
-                    if (data.dias_atraso > 0) {
-                        info.text(`Días de atraso: ${data.dias_atraso}`).addClass('text-danger');
+                    let mensaje = '';
+                    let clase = 'text-muted';
+
+                    if (data.dias_atraso === 0) {
+                        mensaje = 'Oportuno';
+                        clase = 'text-success';
+                    } else if (data.dias_atraso >= 1 && data.dias_atraso <= 3) {
+                        mensaje = `Normal (${data.dias_atraso}d)`;
+                        clase = 'text-warning';
                     } else {
-                        info.text('Sin atraso').addClass('text-success');
+                        mensaje = `Con corte (${data.dias_atraso}d)`;
+                        clase = 'text-danger';
                     }
+
+                    info
+                        .hide()
+                        .removeClass('text-success text-warning text-danger text-muted')
+                        .addClass(clase)
+                        .text(mensaje)
+                        .fadeIn(300);
+
 
                     info.fadeIn(300);
 

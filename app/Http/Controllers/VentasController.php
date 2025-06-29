@@ -52,6 +52,7 @@ class VentasController extends Controller
             return [
                 'id' => $cliente->id,
                 'text' => $cliente->nombre,
+                'dia_pago' => $cliente->dia_cobro,
                 'paquete' => [
                     'nombre' => $cliente->paquete->nombre ?? 'Sin paquete',
                     'precio' => $cliente->paquete->precio ?? 0,
@@ -127,7 +128,7 @@ class VentasController extends Controller
         ]);
 
         return redirect()->route('ventas.index')
-    ->with('venta_id_para_imprimir', $venta->id);
+            ->with('venta_id_para_imprimir', $venta->id);
 
 
     }
@@ -142,34 +143,37 @@ class VentasController extends Controller
     }
 
     public function corte(Request $request)
-{
-    $fecha = $request->input('fecha') ?? now()->toDateString();
-    $usuario_id = $request->input('usuario_id');
+    {
+        $fecha = $request->input('fecha') ?? now()->toDateString();
+        $usuario_id = $request->input('usuario_id');
 
-    $query = Venta::with(['cliente', 'usuario'])
-        ->whereDate('created_at', $fecha);
+        $query = Venta::with(['cliente', 'usuario'])
+            ->whereDate('created_at', $fecha);
 
-    if ($usuario_id) {
-        $query->where('usuario_id', $usuario_id);
+        if ($usuario_id) {
+            $query->where('usuario_id', $usuario_id);
+        }
+
+        $ventas = $query->orderBy('fecha_venta', 'desc')->get();
+        $totalEfectivo = $ventas->where('tipo_pago', 'Efectivo')->sum('total');
+        $totalTransferencia = $ventas->where('tipo_pago', 'Transferencia')->sum('total');
+
+        $conteoEfectivo = $ventas->where('tipo_pago', 'Efectivo')->count();
+        $conteoTransferencia = $ventas->where('tipo_pago', 'Transferencia')->count();
+
+
+        $usuarios = \App\Models\User::all(); // Para llenar el select
+
+        return view('ventas_corte.index', compact(
+            'ventas',
+            'usuarios',
+            'totalEfectivo',
+            'totalTransferencia',
+            'conteoEfectivo',
+            'conteoTransferencia'
+        ));
+
     }
-
-    $ventas = $query->orderBy('fecha_venta', 'desc')->get();
-    $totalEfectivo = $ventas->where('tipo_pago', 'Efectivo')->sum('total');
-$totalTransferencia = $ventas->where('tipo_pago', 'Transferencia')->sum('total');
-
-$conteoEfectivo = $ventas->where('tipo_pago', 'Efectivo')->count();
-$conteoTransferencia = $ventas->where('tipo_pago', 'Transferencia')->count();
-
-
-    $usuarios = \App\Models\User::all(); // Para llenar el select
-
-    return view('ventas_corte.index', compact(
-    'ventas', 'usuarios',
-    'totalEfectivo', 'totalTransferencia',
-    'conteoEfectivo', 'conteoTransferencia'
-));
-
-}
 
     public function obtenerVenta($id)
     {
@@ -222,49 +226,53 @@ $conteoTransferencia = $ventas->where('tipo_pago', 'Transferencia')->count();
         $hoy = now()->startOfDay();
         $diaCobro = $cliente->dia_cobro ?? 1;
 
-        // Si tiene ventas
         $ultimaVenta = $cliente->ventas->sortByDesc('fecha_venta')->first();
+
         if ($ultimaVenta) {
             $periodoFin = Carbon::parse($ultimaVenta->periodo_fin)->startOfDay();
+            $mesAnio = $periodoFin->locale('es')->isoFormat('MMMM [de] YYYY');
+            $mesAnio = ucfirst($mesAnio); // capitaliza la primera letra
 
             if ($hoy->lt($periodoFin)) {
                 $diasRestantes = $hoy->diffInDays($periodoFin);
                 if ($diasRestantes <= 5) {
                     return response()->json([
                         'estado' => 'proximo',
-                        'mensaje' => "Cliente próximo a pagar. Fecha límite: {$periodoFin->format('d/m/Y')}"
+                        'mensaje' => "Cliente próximo a pagar. Está cubierto hasta {$mesAnio}"
                     ]);
                 } else {
                     return response()->json([
                         'estado' => 'corriente',
-                        'mensaje' => "Cliente al corriente. Próxima fecha de pago: {$periodoFin->format('d/m/Y')}"
+                        'mensaje' => "Cliente al corriente. Pagado hasta el mes de {$mesAnio}"
                     ]);
                 }
             } else {
                 return response()->json([
                     'estado' => 'atrasado',
-                    'mensaje' => "Cliente con atraso desde: {$periodoFin->format('d/m/Y')}"
+                    'mensaje' => "Cliente con atraso. Su último mes cubierto fue {$mesAnio}"
                 ]);
             }
         }
 
-        // Si NO tiene ventas
+        // Cliente sin ventas previas
         $referencia = $hoy->copy()->day($diaCobro);
         if ($hoy->day <= $diaCobro) {
             $referencia->subMonthNoOverflow();
         }
 
         $primerDiaAtraso = $referencia->copy()->addDay();
+        $mesAnio = $referencia->locale('es')->isoFormat('MMMM [de] YYYY');
+        $mesAnio = ucfirst($mesAnio);
 
         if ($hoy->gte($primerDiaAtraso)) {
             return response()->json([
                 'estado' => 'atrasado',
-                'mensaje' => "Cliente con atraso desde su día de cobro: {$referencia->format('d/m/Y')}"
+                'mensaje' => "Cliente con atraso desde su día de cobro. Mes pendiente: {$mesAnio}"
             ]);
         } else {
             return response()->json([
                 'estado' => 'corriente',
-                'mensaje' => "Cliente al corriente. Día de cobro: {$referencia->format('d/m/Y')}"
+                'mensaje' => "Cliente al corriente. Primer mes de pago: {$mesAnio}"
             ]);
         }
     }
@@ -278,12 +286,4 @@ $conteoTransferencia = $ventas->where('tipo_pago', 'Transferencia')->count();
 
         return redirect()->route('ventas.historial')->with('success', 'Venta eliminada correctamente.');
     }
-
-
-    
-    
-
-
-
-
 }

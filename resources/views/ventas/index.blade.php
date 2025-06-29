@@ -23,12 +23,19 @@
                 <div id="datosCliente" class="border-top pt-3">
                     {{-- Información Cliente --}}
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <label class="form-label">
                                 <span class="material-icons-round align-middle me-1">person</span> Cliente
                             </label>
                             <input type="text" id="nombre_cliente" class="form-control border rounded-2 px-2" readonly>
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                <span class="material-icons-round align-middle me-1">event</span> Día de Pago
+                            </label>
+                            <input type="text" id="dia_pago" class="form-control border rounded-2 px-2" readonly>
+                        </div>
+
                         <div class="col-md-6">
                             <label class="form-label">
                                 <span class="material-icons-round align-middle me-1">inventory_2</span> Paquete
@@ -38,6 +45,7 @@
                     </div>
 
                     {{-- Configuración Venta --}}
+
                     <div class="row g-3 mb-3">
                         <div class="col-md-4">
                             <label class="form-label">Precio</label>
@@ -75,11 +83,16 @@
                                 class="form-control border rounded-2 px-2" value="0">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Recargo Falta Pago</label>
+                            <label class="form-label d-flex align-items-center justify-content-between">
+                                <span>Recargo</span>
+                                <small id="info_falta_pago" class="ms-2 fw-semibold text-muted"
+                                    style="font-size: 0.8rem;"></small>
+                            </label>
+
                             <input type="number" name="recargo_falta_pago" id="recargo_falta_pago"
                                 class="form-control border rounded-2 px-2" readonly>
-                            <small id="info_falta_pago" class="text-muted d-block mt-1"></small>
                         </div>
+
                     </div>
 
                     {{-- Resumen --}}
@@ -128,8 +141,10 @@
                             <tr>
                                 <td>{{ $venta->cliente->nombre }}</td>
                                 <td>{{ $venta->usuario->name }}</td>
-                                <td>{{ $venta->created_at->format('Y-m-d') }} <br><small>{{ $venta->created_at->format('h:i A') }}</small></td>
-                                <td>{{ ucfirst($venta->tipo_pago ?? 'N/A') }}</td> 
+                                <td>{{ $venta->created_at->format('Y-m-d') }}
+                                    <br><small>{{ $venta->created_at->format('h:i A') }}</small>
+                                </td>
+                                <td>{{ ucfirst($venta->tipo_pago ?? 'N/A') }}</td>
                                 <td>${{ number_format($venta->total, 2) }}</td>
                                 <td class="text-center">
                                     <button class="btn btn-link text-info p-0 mx-1 btn-ver-venta" title="Ver"
@@ -160,11 +175,10 @@
     @include('ventas_historial.partials.modal-eliminar')
 
     @if(session('venta_id_para_imprimir'))
-    <iframe
-        src="{{ route('ticket.imprimible', session('venta_id_para_imprimir')) }}"
-        style="width:0;height:0;border:0;visibility:hidden;">
-    </iframe>
-@endif
+        <iframe src="{{ route('ticket.imprimible', session('venta_id_para_imprimir')) }}"
+            style="width:0;height:0;border:0;visibility:hidden;">
+        </iframe>
+    @endif
 
 
 
