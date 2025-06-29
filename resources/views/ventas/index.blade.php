@@ -118,6 +118,7 @@
                             <th>Cliente</th>
                             <th>Usuario</th>
                             <th>Fecha Venta</th>
+                            <th>Método de pago</th>
                             <th>Total</th>
                             <th class="text-center">Acciones</th>
                         </tr>
@@ -127,7 +128,8 @@
                             <tr>
                                 <td>{{ $venta->cliente->nombre }}</td>
                                 <td>{{ $venta->usuario->name }}</td>
-                                <td>{{ $venta->fecha_venta }}</td>
+                                <td>{{ $venta->created_at->format('Y-m-d') }} <br><small>{{ $venta->created_at->format('h:i A') }}</small></td>
+                                <td>{{ ucfirst($venta->tipo_pago ?? 'N/A') }}</td> 
                                 <td>${{ number_format($venta->total, 2) }}</td>
                                 <td class="text-center">
                                     <button class="btn btn-link text-info p-0 mx-1 btn-ver-venta" title="Ver"

@@ -88,6 +88,15 @@
           <label class="form-label fw-bold text-dark">Referencias</label>
           <textarea name="referencias" class="form-control border" rows="2">{{ $cliente->referencias }}</textarea>
         </div>
+
+        <div class="col-md-4 mb-3">
+          <label class="form-label fw-bold text-dark">Estado</label>
+          <select name="activo" class="form-select border">
+            <option value="1" {{ $cliente->activo ? 'selected' : '' }}>Activo</option>
+            <option value="0" {{ !$cliente->activo ? 'selected' : '' }}>Inactivo</option>
+          </select>
+        </div>
+
       </div>
     </div>
 

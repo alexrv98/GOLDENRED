@@ -26,6 +26,7 @@ class Cliente extends Model
         'referencias',
         'torre', 
         'panel',
+        'activo',
     ];
 
     protected $casts = [

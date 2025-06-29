@@ -29,6 +29,7 @@
                                 <th class="text-uppercase text-dark text-xs font-weight-bolder">Día de cobro</th>
                                 <th class="text-uppercase text-dark text-xs font-weight-bolder">Referencias</th>
                                 <th class="text-uppercase text-dark text-xs font-weight-bolder">Acciones</th>
+                                <th class="text-uppercase text-dark text-xs font-weight-bolder">Estado</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -63,6 +64,13 @@
                                             </button>
                                         @endcan
                                     </td>
+                                    <td>
+                                        @if ($cliente->activo)
+                                            <span class="badge bg-success text-white text-xs">Activo</span>
+                                            @else
+                                            <span class="badge bg-secondary text-white text-xs">Inactivo</span>
+                                        @endif
+                                    </td>             
                                 </tr>
                             @endforeach
                         </tbody>

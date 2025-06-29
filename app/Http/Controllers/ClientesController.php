@@ -20,16 +20,15 @@ class ClientesController extends Controller
     public function index()
     {
         $clientes = Cliente::all();
-        $paquetes = Paquete::all(); // 👈 Añadido para la vista
+        $paquetes = Paquete::all();
         return view('clientes.index', compact('clientes', 'paquetes'));
     }
 
     public function create()
     {
-        $paquetes = Paquete::all(); // 👈 También puedes usar esto si tienes una vista create separada
+        $paquetes = Paquete::all();
         return view('clientes.create', compact('paquetes'));
     }
-    
 
     public function editModal($id)
     {
@@ -43,7 +42,6 @@ class ClientesController extends Controller
         $cliente = Cliente::findOrFail($id);
         return view('clientes.partials.modal-delete', compact('cliente'));
     }
-
 
     public function store(Request $request)
     {
@@ -61,9 +59,13 @@ class ClientesController extends Controller
             'referencias' => 'nullable|string',
             'torre' => 'nullable|string|max:255',
             'panel' => 'nullable|string|max:255',
+            'activo' => 'nullable|boolean',
         ]);
 
-        Cliente::create($request->all());
+        $data = $request->all();
+        $data['activo'] = true; // por defecto activo
+
+        Cliente::create($data);
 
         return redirect()->route('clientes.index')->with('success', 'Cliente creado exitosamente.');
     }
@@ -71,12 +73,29 @@ class ClientesController extends Controller
     public function edit($id)
     {
         $cliente = Cliente::findOrFail($id);
-        $paquetes = Paquete::all(); // 👈 Por si usas una vista separada
+        $paquetes = Paquete::all();
         return view('clientes.edit', compact('cliente', 'paquetes'));
     }
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'nombre' => 'required|string|max:120',
+            'telefono1' => 'nullable|string|max:20',
+            'telefono2' => 'nullable|string|max:20',
+            'fecha_contrato' => 'required|date',
+            'dia_cobro' => 'required|integer|min:1|max:31',
+            'paquete_id' => 'nullable|exists:paquetes,id',
+            'Mac' => 'nullable|string|max:255',
+            'IP' => 'nullable|string|max:255',
+            'direccion' => 'nullable|string|max:255',
+            'coordenadas' => 'nullable|string|max:60',
+            'referencias' => 'nullable|string',
+            'torre' => 'nullable|string|max:255',
+            'panel' => 'nullable|string|max:255',
+            'activo' => 'nullable|boolean',
+        ]);
+
         $cliente = Cliente::findOrFail($id);
 
         $cliente->update($request->only([
@@ -93,29 +112,26 @@ class ClientesController extends Controller
             'referencias',
             'torre',
             'panel',
+            'activo',
         ]));
 
         if ($request->has('equipo')) {
             $equipoData = $request->input('equipo');
 
-            // Convertimos campos vacíos en null
             $filteredEquipo = array_map(function ($value) {
                 return $value === '' ? null : $value;
             }, $equipoData);
 
-            // Verificamos si hay al menos un campo con valor
             $hasData = collect($filteredEquipo)->filter(function ($value) {
                 return !is_null($value);
             })->isNotEmpty();
 
             if ($hasData) {
-                // Crear o actualizar normalmente
                 $cliente->equipos()->updateOrCreate(
                     ['cliente_id' => $cliente->id],
                     array_merge($filteredEquipo, ['cliente_id' => $cliente->id])
                 );
             } else {
-                // Si ya existía un equipo, actualízalo poniendo los campos como null
                 $equipoExistente = $cliente->equipos()->where('cliente_id', $cliente->id)->first();
                 if ($equipoExistente) {
                     $equipoExistente->delete();
