@@ -16,7 +16,7 @@
                         <li class="list-group-item d-flex justify-content-between"><strong>Meses:</strong> <span id="detalle_meses"></span></li>
                         <li class="list-group-item d-flex justify-content-between"><strong>Descuento:</strong> <span id="detalle_descuento"></span></li>
                         <li class="list-group-item d-flex justify-content-between"><strong>Recargo Domicilio:</strong> <span id="detalle_recargo_domicilio"></span></li>
-                        <li class="list-group-item d-flex justify-content-between"><strong>Recargo Falta Pago:</strong> <span id="detalle_recargo_falta_pago"></span></li>
+                        <li class="list-group-item d-flex justify-content-between"><strong>Recargo </strong><span id="detalle_recargo_atraso"></span></li>
                     </ul>
                     <hr class="my-3">
                     <div class="d-flex justify-content-between fs-5">

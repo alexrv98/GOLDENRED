@@ -11,24 +11,24 @@ use Carbon\Carbon;
 class VentasController extends Controller
 {
     public function index(Request $request)
-{
-    $clientes = Cliente::with([
-        'paquete',
-        'ventas' => fn($q) => $q->orderBy('fecha_venta', 'desc')->limit(1)
-    ])->get();
+    {
+        $clientes = Cliente::with([
+            'paquete',
+            'ventas' => fn($q) => $q->orderBy('fecha_venta', 'desc')->limit(1)
+        ])->get();
 
-    $ventasHoy = Venta::with(['cliente', 'usuario'])
-        ->whereDate('fecha_venta', today())
-        ->orderBy('created_at', 'desc') 
-        ->get();
+        $ventasHoy = Venta::with(['cliente', 'usuario'])
+            ->whereDate('fecha_venta', today())
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    $ventaEditar = null;
-    if ($request->has('editar')) {
-        $ventaEditar = Venta::with('cliente.paquete')->find($request->editar);
+        $ventaEditar = null;
+        if ($request->has('editar')) {
+            $ventaEditar = Venta::with('cliente.paquete')->find($request->editar);
+        }
+
+        return view('ventas.index', compact('clientes', 'ventasHoy', 'ventaEditar'));
     }
-
-    return view('ventas.index', compact('clientes', 'ventasHoy', 'ventaEditar'));
-}
 
 
     public function calcularRecargo(Cliente $cliente)
@@ -85,16 +85,15 @@ class VentasController extends Controller
     $precioPaquete = $cliente->paquete->precio;
     $meses = (int) $request->meses;
 
-    // 🟦 Aplicar promoción según los meses pagados
+    // Promoción: meses extra por prepago
     $mesesExtra = 0;
     if ($meses === 6) {
-        $mesesExtra = 1; // 1 mes gratis
+        $mesesExtra = 1;
     } elseif ($meses === 12) {
-        $mesesExtra = 2; // 2 meses gratis
+        $mesesExtra = 2;
     }
 
     $mesesTotales = $meses + $mesesExtra;
-
     $subtotal = $precioPaquete * $meses;
 
     $fechaHoy = now()->startOfDay();
@@ -103,9 +102,12 @@ class VentasController extends Controller
         ->orderBy('fecha_venta', 'desc')
         ->first();
 
-    [$diasAtraso, $recargo_falta_pago] = $this->obtenerAtrasoYRecargo($cliente);
+    [$diasAtraso, $recargoCalculado] = $this->obtenerAtrasoYRecargo($cliente);
 
-    $total = $subtotal - ($request->descuento ?? 0) + ($request->recargo_domicilio ?? 0) + $recargo_falta_pago;
+    $total = $subtotal
+        - ($request->descuento ?? 0)
+        + ($request->recargo_domicilio ?? 0)
+        + $recargoCalculado;
 
     $diaCobro = $cliente->dia_cobro ?? 1;
 
@@ -114,25 +116,22 @@ class VentasController extends Controller
     } else {
         $hoy = now()->startOfDay();
         $proximoCobro = $hoy->copy()->day($diaCobro);
-
         if ($hoy->day > $diaCobro) {
             $proximoCobro->addMonthNoOverflow();
         }
-
         $periodoInicio = $proximoCobro;
     }
 
-    // 🟩 Aplicar meses totales con promoción
     $periodoFin = $periodoInicio->copy()->addMonthsNoOverflow($mesesTotales);
 
     $venta = Venta::create([
         'usuario_id' => Auth::id(),
         'cliente_id' => $cliente->id,
         'estado' => 'pagado',
-        'meses' => $meses, // se almacena lo pagado, no lo regalado
+        'meses' => $meses, // solo lo pagado
         'descuento' => $request->descuento ?? 0,
         'recargo_domicilio' => $request->recargo_domicilio ?? 0,
-        'recargo_falta_pago' => $recargo_falta_pago,
+        'recargo_atraso' => $recargoCalculado, // ✅ monto del recargo por atraso
         'fecha_venta' => now(),
         'subtotal' => $subtotal,
         'total' => $total,
@@ -232,119 +231,117 @@ class VentasController extends Controller
         return [$diasAtraso, $recargo];
     }
 
-   public function estadoCliente($clienteId)
-{
-    $cliente = Cliente::with('ventas')->findOrFail($clienteId);
-    $hoy = now()->startOfDay();
-    $diaCobro = $cliente->dia_cobro ?? 1;
+    public function estadoCliente($clienteId)
+    {
+        $cliente = Cliente::with('ventas')->findOrFail($clienteId);
+        $hoy = now()->startOfDay();
+        $diaCobro = $cliente->dia_cobro ?? 1;
 
-    $ultimaVenta = $cliente->ventas->sortByDesc('fecha_venta')->first();
+        $ultimaVenta = $cliente->ventas->sortByDesc('fecha_venta')->first();
 
-    // 🟢 Si no tiene ventas, no debería aparecer como atrasado
-    if (is_null($ultimaVenta)) {
-        return response()->json([
-            'estado' => 'nuevo',
-            'mensaje' => 'Cliente nuevo. Aún no ha realizado pagos.'
-        ]);
-    }
-
-    $periodoFin = Carbon::parse($ultimaVenta->periodo_fin)->startOfDay();
-    $mesAnio = $periodoFin->locale('es')->isoFormat('MMMM [de] YYYY');
-    $mesAnio = ucfirst($mesAnio);
-
-    if ($hoy->lt($periodoFin)) {
-        $diasRestantes = $hoy->diffInDays($periodoFin);
-        if ($diasRestantes <= 5) {
+        // 🟢 Si no tiene ventas, no debería aparecer como atrasado
+        if (is_null($ultimaVenta)) {
             return response()->json([
-                'estado' => 'proximo',
-                'mensaje' => "Cliente próximo a pagar. Está cubierto hasta {$mesAnio}"
+                'estado' => 'nuevo',
+                'mensaje' => 'Cliente nuevo. Aún no ha realizado pagos.'
             ]);
+        }
+
+        $periodoFin = Carbon::parse($ultimaVenta->periodo_fin)->startOfDay();
+        $mesAnio = $periodoFin->locale('es')->isoFormat('MMMM [de] YYYY');
+        $mesAnio = ucfirst($mesAnio);
+
+        if ($hoy->lt($periodoFin)) {
+            $diasRestantes = $hoy->diffInDays($periodoFin);
+            if ($diasRestantes <= 5) {
+                return response()->json([
+                    'estado' => 'proximo',
+                    'mensaje' => "Cliente próximo a pagar. Está cubierto hasta {$mesAnio}"
+                ]);
+            } else {
+                return response()->json([
+                    'estado' => 'corriente',
+                    'mensaje' => "Cliente al corriente. Pagado hasta el mes de {$mesAnio}"
+                ]);
+            }
         } else {
             return response()->json([
-                'estado' => 'corriente',
-                'mensaje' => "Cliente al corriente. Pagado hasta el mes de {$mesAnio}"
+                'estado' => 'atrasado',
+                'mensaje' => "Cliente con atraso. Su último mes cubierto fue {$mesAnio}"
             ]);
         }
-    } else {
-        return response()->json([
-            'estado' => 'atrasado',
-            'mensaje' => "Cliente con atraso. Su último mes cubierto fue {$mesAnio}"
+    }
+
+
+    public function update(Request $request, Venta $venta)
+    {
+        $request->validate([
+            'meses' => 'required|integer|min:1|max:12',
+            'tipo_pago' => 'required|in:Efectivo,Transferencia',
+            'descuento' => 'nullable|numeric|min:0',
+            'recargo_domicilio' => 'nullable|numeric|min:0',
+            'recargo_falta_pago' => 'nullable|numeric|min:0',
         ]);
-    }
-}
 
+        $cliente = $venta->cliente()->with('paquete')->first();
 
- public function update(Request $request, Venta $venta)
-{
-    $request->validate([
-        'meses' => 'required|integer|min:1|max:12',
-        'tipo_pago' => 'required|in:Efectivo,Transferencia',
-        'descuento' => 'nullable|numeric|min:0',
-        'recargo_domicilio' => 'nullable|numeric|min:0',
-        'recargo_falta_pago' => 'nullable|numeric|min:0',
-    ]);
-
-    $cliente = $venta->cliente()->with('paquete')->first();
-
-    if (!$cliente || !$cliente->paquete) {
-        return redirect()->back()->with('error', 'El cliente no tiene paquete asignado.');
-    }
-
-    $precioBase = $cliente->paquete->precio;
-    $meses = (int) $request->meses;
-
-    // Aplicar promoción (como en el store)
-    $mesesExtra = 0;
-    if ($meses === 6) {
-        $mesesExtra = 1;
-    } elseif ($meses === 12) {
-        $mesesExtra = 2;
-    }
-
-    $mesesTotales = $meses + $mesesExtra;
-
-    $subtotal = $precioBase * $meses;
-    $total = $subtotal - $request->descuento + $request->recargo_domicilio + $request->recargo_falta_pago;
-
-    // Calcular periodo de nuevo (igual que en store)
-    $ultimaVenta = Venta::where('cliente_id', $cliente->id)
-        ->where('id', '!=', $venta->id) // excluir la venta que se está editando
-        ->orderBy('fecha_venta', 'desc')
-        ->first();
-
-    $diaCobro = $cliente->dia_cobro ?? 1;
-
-    if ($ultimaVenta) {
-        $periodoInicio = Carbon::parse($ultimaVenta->periodo_fin)->startOfDay();
-    } else {
-        $hoy = now()->startOfDay();
-        $proximoCobro = $hoy->copy()->day($diaCobro);
-        if ($hoy->day > $diaCobro) {
-            $proximoCobro->addMonthNoOverflow();
+        if (!$cliente || !$cliente->paquete) {
+            return redirect()->back()->with('error', 'El cliente no tiene paquete asignado.');
         }
-        $periodoInicio = $proximoCobro;
+
+        $precioBase = $cliente->paquete->precio;
+        $meses = (int) $request->meses;
+
+        // Aplicar promoción (como en el store)
+        $mesesExtra = 0;
+        if ($meses === 6) {
+            $mesesExtra = 1;
+        } elseif ($meses === 12) {
+            $mesesExtra = 2;
+        }
+
+        $mesesTotales = $meses + $mesesExtra;
+
+        $subtotal = $precioBase * $meses;
+        $total = $subtotal - $request->descuento + $request->recargo_domicilio + $request->recargo_falta_pago;
+
+        // Calcular periodo de nuevo (igual que en store)
+        $ultimaVenta = Venta::where('cliente_id', $cliente->id)
+            ->where('id', '!=', $venta->id) // excluir la venta que se está editando
+            ->orderBy('fecha_venta', 'desc')
+            ->first();
+
+        $diaCobro = $cliente->dia_cobro ?? 1;
+
+        if ($ultimaVenta) {
+            $periodoInicio = Carbon::parse($ultimaVenta->periodo_fin)->startOfDay();
+        } else {
+            $hoy = now()->startOfDay();
+            $proximoCobro = $hoy->copy()->day($diaCobro);
+            if ($hoy->day > $diaCobro) {
+                $proximoCobro->addMonthNoOverflow();
+            }
+            $periodoInicio = $proximoCobro;
+        }
+
+        $periodoFin = $periodoInicio->copy()->addMonthsNoOverflow($mesesTotales);
+
+        // Actualizar la venta
+        $venta->update([
+            'meses' => $meses,
+            'tipo_pago' => $request->tipo_pago,
+            'descuento' => $request->descuento ?? 0,
+            'recargo_domicilio' => $request->recargo_domicilio ?? 0,
+            'recargo_falta_pago' => $request->recargo_falta_pago ?? 0,
+            'subtotal' => $subtotal,
+            'total' => $total,
+            'periodo_inicio' => $periodoInicio,
+            'periodo_fin' => $periodoFin,
+        ]);
+
+        return redirect()->route('ventas.index')
+            ->with('success', 'Venta actualizada correctamente ✨');
     }
-
-    $periodoFin = $periodoInicio->copy()->addMonthsNoOverflow($mesesTotales);
-
-    // Actualizar la venta
-    $venta->update([
-        'meses' => $meses,
-        'tipo_pago' => $request->tipo_pago,
-        'descuento' => $request->descuento ?? 0,
-        'recargo_domicilio' => $request->recargo_domicilio ?? 0,
-        'recargo_falta_pago' => $request->recargo_falta_pago ?? 0,
-        'subtotal' => $subtotal,
-        'total' => $total,
-        'periodo_inicio' => $periodoInicio,
-        'periodo_fin' => $periodoFin,
-    ]);
-
-    return redirect()->route('ventas.index')
-        ->with('success', 'Venta actualizada correctamente ✨');
-}
-
-
 
     public function destroy($id)
     {

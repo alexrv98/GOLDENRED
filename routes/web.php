@@ -71,7 +71,7 @@ Route::get('/api/ventas/{venta}', function (App\Models\Venta $venta) {
         'meses' => $venta->meses,
         'descuento' => $venta->descuento,
         'recargo_domicilio' => $venta->recargo_domicilio,
-        'recargo_falta_pago' => $venta->recargo_falta_pagon ?? 0,
+        'recargo_atraso' => $venta->recargo_atraso ?? 0,
         'total' => $venta->total,
     ]);
 });

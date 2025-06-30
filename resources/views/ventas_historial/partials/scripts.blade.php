@@ -17,7 +17,9 @@
                     document.getElementById('detalle_meses').textContent = data.meses ?? '—';
                     document.getElementById('detalle_descuento').textContent = `$${data.descuento ?? '0.00'}`;
                     document.getElementById('detalle_recargo_domicilio').textContent = `$${data.recargo_domicilio ?? '0.00'}`;
-                    document.getElementById('detalle_recargo_falta_pago').textContent = `$${data.recargo_falta_pago ?? '0.00'}`;
+                    document.getElementById('detalle_recargo_atraso').textContent = `$${data.recargo_atraso ?? '0.00'}`;
+
+
                     document.getElementById('detalle_total').textContent = `$${data.total ?? '0.00'}`;
 
                     const modal = new bootstrap.Modal(document.getElementById('modalDetalleVenta'));
@@ -60,6 +62,26 @@
         backdrops.forEach(b => b.remove());
     });
 </script>
+<script>
+    document.querySelectorAll('.btn-modalEliminarVenta').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const ventaId = this.dataset.id;
+            const clienteNombre = this.dataset.cliente;
+
+            // Actualiza nombre en el texto del modal
+            document.getElementById('nombreClienteEliminar').textContent = clienteNombre;
+
+            // Actualiza la acción del formulario para eliminar correctamente
+            const form = document.getElementById('formEliminarVenta');
+            form.action = `/ventas/${ventaId}`; // o usa route() si lo armas con Blade
+
+            // Muestra la modal
+            const modal = new bootstrap.Modal(document.getElementById('modalEliminarVenta'));
+            modal.show();
+        });
+    });
+</script>
+
 
 @push('scripts')
     <script>

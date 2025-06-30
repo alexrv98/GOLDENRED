@@ -180,7 +180,7 @@
                                         <span class="material-icons">edit</span>
                                     </a>
 
-                                    <button type="button" class="btn btn-link text-danger p-0 mx-1 btn-modal-eliminar"
+                                    <button type="button" class="btn btn-link text-danger p-0 mx-1 btn-modalEliminarVenta"
                                         data-id="{{ $venta->id }}" data-cliente="{{ $venta->cliente->nombre }}"
                                         title="Eliminar">
                                         <span class="material-icons">delete_forever</span>
