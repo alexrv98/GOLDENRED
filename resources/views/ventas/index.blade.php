@@ -193,7 +193,7 @@
                 </table>
             @endif
 
-            <a href="#" class="btn btn-secondary">Ver historial completo</a>
+            <a href="{{ route('ventas.historial') }}" class="btn btn-secondary">Ver historial completo</a>
         </div>
     </main>
     @include('ventas.partials.scripts')

@@ -76,9 +76,7 @@ Route::get('/api/ventas/{venta}', function (App\Models\Venta $venta) {
     ]);
 });
 Route::get('/ticket/imprimir/{venta}', [TicketController::class, 'imprimible'])->name('ticket.imprimible');
-
-
-
+Route::get('/ventas/{id}/ticket', [TicketController::class, 'reimprimir'])->name('ventas.ticket');
 
 
 require __DIR__ . '/auth.php';

@@ -284,21 +284,60 @@ class VentasController extends Controller
         'recargo_falta_pago' => 'nullable|numeric|min:0',
     ]);
 
-    // Obtener precio base del paquete del cliente
-    $precioBase = $venta->cliente->paquete->precio ?? 0;
+    $cliente = $venta->cliente()->with('paquete')->first();
 
-    // Calcular subtotal y total de forma segura
-    $subtotal = $precioBase * $request->meses;
+    if (!$cliente || !$cliente->paquete) {
+        return redirect()->back()->with('error', 'El cliente no tiene paquete asignado.');
+    }
+
+    $precioBase = $cliente->paquete->precio;
+    $meses = (int) $request->meses;
+
+    // Aplicar promoción (como en el store)
+    $mesesExtra = 0;
+    if ($meses === 6) {
+        $mesesExtra = 1;
+    } elseif ($meses === 12) {
+        $mesesExtra = 2;
+    }
+
+    $mesesTotales = $meses + $mesesExtra;
+
+    $subtotal = $precioBase * $meses;
     $total = $subtotal - $request->descuento + $request->recargo_domicilio + $request->recargo_falta_pago;
+
+    // Calcular periodo de nuevo (igual que en store)
+    $ultimaVenta = Venta::where('cliente_id', $cliente->id)
+        ->where('id', '!=', $venta->id) // excluir la venta que se está editando
+        ->orderBy('fecha_venta', 'desc')
+        ->first();
+
+    $diaCobro = $cliente->dia_cobro ?? 1;
+
+    if ($ultimaVenta) {
+        $periodoInicio = Carbon::parse($ultimaVenta->periodo_fin)->startOfDay();
+    } else {
+        $hoy = now()->startOfDay();
+        $proximoCobro = $hoy->copy()->day($diaCobro);
+        if ($hoy->day > $diaCobro) {
+            $proximoCobro->addMonthNoOverflow();
+        }
+        $periodoInicio = $proximoCobro;
+    }
+
+    $periodoFin = $periodoInicio->copy()->addMonthsNoOverflow($mesesTotales);
 
     // Actualizar la venta
     $venta->update([
-        'meses' => $request->meses,
+        'meses' => $meses,
         'tipo_pago' => $request->tipo_pago,
-        'descuento' => $request->descuento,
-        'recargo_domicilio' => $request->recargo_domicilio,
-        'recargo_falta_pago' => $request->recargo_falta_pago,
+        'descuento' => $request->descuento ?? 0,
+        'recargo_domicilio' => $request->recargo_domicilio ?? 0,
+        'recargo_falta_pago' => $request->recargo_falta_pago ?? 0,
+        'subtotal' => $subtotal,
         'total' => $total,
+        'periodo_inicio' => $periodoInicio,
+        'periodo_fin' => $periodoFin,
     ]);
 
     return redirect()->route('ventas.index')
