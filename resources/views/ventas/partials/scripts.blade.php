@@ -168,8 +168,16 @@
         });
 
         btnEnviar.addEventListener('click', function () {
-            document.getElementById('formCrearVenta').submit();
-        });
+    // Desactivar el botón inmediatamente
+    this.disabled = true;
+
+    // Cambiar texto o icono si deseas retroalimentación visual
+    this.innerHTML = '<i class="material-icons me-1">hourglass_top</i> Procesando...';
+
+    // Enviar el formulario
+    document.getElementById('formCrearVenta').submit();
+});
+
     });
 </script>
 @if($ventaEditar)

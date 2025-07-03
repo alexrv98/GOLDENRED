@@ -48,7 +48,7 @@
                                         <p class="text-xs mb-0 text-warning">{{ $cliente->dia_cobro }}</p>
                                     </td>
                                     <td>
-                                        <p class="text-xs mb-0">{{ $cliente->referencias }}</p>
+                                        <p class="text-xs mb-0" style="white-space: normal;">{{ $cliente->referencias }}</p>
                                     </td>
                                     <td class="text-center">
                                         
@@ -57,12 +57,13 @@
                                                 <span class="material-icons">edit</span>
                                             </button>
                                         
-                                        @can('Eliminar clientes')
+                                       {{--  @can('Eliminar clientes')
                                             <button class="btn btn-link text-danger p-0 mx-1 btn-modal" title="Eliminar"
                                                 data-url="{{ route('clientes.delete-modal', $cliente->id) }}">
                                                 <span class="material-icons">delete_forever</span>
                                             </button>
                                         @endcan
+                                         --}}
                                     </td>
                                     <td>
                                         @if ($cliente->activo)
