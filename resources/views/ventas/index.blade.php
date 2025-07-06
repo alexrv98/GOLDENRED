@@ -128,14 +128,14 @@
                             <input type="number" id="total" class="form-control border rounded-2 px-2" readonly>
                         </div>
                     </div>
-
+@can('Crear ventas')
                     {{-- Botón --}}
                     <div class="text-end">
                         <button type="button" id="btnConfirmarVenta" class="btn btn-primary">
                             <span class="material-icons-round align-middle me-1">check_circle</span>
                             {{ $ventaEditar ? 'Actualizar Venta' : 'Generar Venta' }}
                         </button>
-
+@endcan
                     </div>
                 </div>
             </form>
@@ -175,16 +175,22 @@
                                         data-id="{{ $venta->id }}" data-bs-toggle="modal" data-bs-target="#modalDetalleVenta">
                                         <span class="material-icons">visibility</span>
                                     </button>
+                                    @can('Editar ventas')
                                     <a href="{{ route('ventas.index', ['editar' => $venta->id]) }}"
                                         class="btn btn-link text-warning p-0 mx-1" title="Editar">
                                         <span class="material-icons">edit</span>
                                     </a>
+                                    @endcan
+
+                                    @can('Eliminar ventas')
+
 
                                     <button type="button" class="btn btn-link text-danger p-0 mx-1 btn-modalEliminarVenta"
                                         data-id="{{ $venta->id }}" data-cliente="{{ $venta->cliente->nombre }}"
                                         title="Eliminar">
                                         <span class="material-icons">delete_forever</span>
                                     </button>
+                                    @endcan
                                 </td>
 
                             </tr>
