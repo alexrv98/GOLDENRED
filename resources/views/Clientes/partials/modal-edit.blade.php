@@ -43,16 +43,17 @@
         </div>
 
         <div class="col-md-4 mb-3">
-          <label class="form-label fw-bold text-dark">Paquete</label>
-          <select name="paquete_id" class="form-select border" required>
-            <option value="">-- Selecciona un paquete --</option>
-            @foreach($paquetes as $paquete)
-        <option value="{{ $paquete->id }}" {{ $cliente->paquete_id == $paquete->id ? 'selected' : '' }}>
-          {{ $paquete->nombre }}
-        </option>
-      @endforeach
-          </select>
-        </div>
+  <label class="form-label fw-bold text-dark">Paquete</label>
+  <select name="paquete_id" class="form-select border" required>
+    <option value="">-- Selecciona un paquete --</option>
+    @foreach($paquetes as $paquete)
+      <option value="{{ $paquete->id }}" {{ $cliente->paquete_id == $paquete->id ? 'selected' : '' }}>
+        {{ $paquete->nombre }} - ${{ number_format($paquete->precio, 2) }}
+      </option>
+    @endforeach
+  </select>
+</div>
+
         <div class="col-md-4 mb-3">
           <label class="form-label fw-bold text-dark">Torre</label>
           <input type="text" name="torre" class="form-control border" value="{{ $cliente->torre }}">

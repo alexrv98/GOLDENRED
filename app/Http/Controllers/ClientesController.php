@@ -33,7 +33,7 @@ class ClientesController extends Controller
     public function editModal($id)
     {
         $cliente = Cliente::findOrFail($id);
-        $paquetes = Paquete::select('id', 'nombre')->get();
+$paquetes = Paquete::select('id', 'nombre', 'precio')->get();
         return view('clientes.partials.modal-edit', compact('cliente', 'paquetes'));
     }
 

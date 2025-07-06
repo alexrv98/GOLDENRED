@@ -52,9 +52,12 @@
               <select name="paquete_id" class="form-select border" required>
                 <option value="">-- Selecciona un paquete --</option>
                 @foreach($paquetes as $paquete)
-          <option value="{{ $paquete->id }}">{{ $paquete->nombre }}</option>
+          <option value="{{ $paquete->id }}">
+            {{ $paquete->nombre }} - ${{ number_format($paquete->precio, 2) }}
+          </option>
         @endforeach
               </select>
+
             </div>
             <div class="col-md-4 mb-3">
               <label class="form-label fw-bold text-dark">Torre</label>
