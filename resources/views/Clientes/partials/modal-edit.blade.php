@@ -77,7 +77,7 @@
 
         <div class="col-md-4 mb-3">
           <label class="form-label fw-bold text-dark">Dirección</label>
-          <input type="text" name="direccion" class="form-control border" value="{{ $cliente->direccion }}">
+          <textarea name="direccion" class="form-control border" rows="2">{{ $cliente->direccion }}</textarea>
         </div>
 
         <div class="col-md-6 mb-3">

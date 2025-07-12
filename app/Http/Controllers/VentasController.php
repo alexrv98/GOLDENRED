@@ -201,16 +201,39 @@ class VentasController extends Controller
         ]);
     }
 
-    private function obtenerAtrasoYRecargo(Cliente $cliente): array
+   private function obtenerAtrasoYRecargo(Cliente $cliente): array
 {
     $hoy = now()->startOfDay();
-    $ultimaVenta = Venta::where('cliente_id', $cliente->id)->orderBy('fecha_venta', 'desc')->first();
 
-    // 🛡️ Cliente sin historial de venta: sin atraso ni recargo
-    if (is_null($ultimaVenta)) {
-        return [0, 0];
+    // Verifica si ya se realizó una venta este mes
+    $ventaActual = Venta::where('cliente_id', $cliente->id)
+        ->whereMonth('fecha_venta', $hoy->month)
+        ->whereYear('fecha_venta', $hoy->year)
+        ->first();
+
+    if ($ventaActual) {
+        return [0, 0]; // Ya pagó este mes
     }
 
+    // ⚠️ Si es cliente nuevo o sin historial de ventas
+    $ultimaVenta = Venta::where('cliente_id', $cliente->id)
+        ->orderByDesc('fecha_venta')
+        ->first();
+
+    if (is_null($ultimaVenta)) {
+        // Aplicar lógica de recargo según día de cobro del cliente
+        $diaCobro = Carbon::createFromDate($hoy->year, $hoy->month, $cliente->dia_cobro)->startOfDay();
+
+        if ($hoy->greaterThan($diaCobro)) {
+            $diasRetraso = $diaCobro->diffInDays($hoy);
+            $recargo = $diasRetraso <= 3 ? 40 : 140;
+            return [$diasRetraso, $recargo];
+        }
+
+        return [0, 0]; // Aún no llega su día de cobro
+    }
+
+    // ⚡ Caso normal: calcular atraso desde periodo_fin
     $fechaBase = Carbon::parse($ultimaVenta->periodo_fin)->startOfDay();
     $primerDiaAtraso = $fechaBase->copy()->addDay();
 
