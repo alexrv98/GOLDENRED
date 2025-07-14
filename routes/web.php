@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActividadController;
 use App\Http\Controllers\AuditoriaController;
+use App\Http\Controllers\ExportarVentasController;
 use App\Http\Controllers\PaquetesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VentasController;
@@ -59,6 +60,7 @@ Route::middleware(['auth', NoCache::class,])->group(function () {
     Route::resource('auditoria', AuditoriaController::class);
     Route::put('/ventas/{venta}', [VentasController::class, 'update'])->name('ventas.update');
 
+    Route::get('/ventas/exportar', [ExportarVentasController::class, 'exportar'])->name('ventas.exportar');
 
 
 });

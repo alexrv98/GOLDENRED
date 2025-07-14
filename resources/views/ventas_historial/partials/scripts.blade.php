@@ -102,3 +102,50 @@
         }
     </script>
 @endpush
+
+
+<script>
+
+    function formatFechaLocal(date) {
+        const year = date.getFullYear();
+        const mes = String(date.getMonth() + 1).padStart(2, '0');
+        const dia = String(date.getDate()).padStart(2, '0');
+        return `${year}-${mes}-${dia}`;
+    }
+
+    function seleccionarHoy() {
+    const hoy = new Date();
+    const fecha = formatFechaLocal(hoy);
+    document.getElementById('fecha_inicio').value = fecha;
+    document.getElementById('fecha_fin').value = fecha;
+}
+
+
+    function seleccionarSemana() {
+    const hoy = new Date();
+    const diaSemana = hoy.getDay(); // 0 = domingo, 1 = lunes, ..., 6 = sábado
+
+    // Calcular lunes
+    const lunes = new Date(hoy);
+    lunes.setDate(hoy.getDate() - (diaSemana === 0 ? 6 : diaSemana - 1));
+
+    // Calcular domingo
+    const domingo = new Date(lunes);
+    domingo.setDate(lunes.getDate() + 6);
+
+    document.getElementById('fecha_inicio').value = formatFechaLocal(lunes);
+    document.getElementById('fecha_fin').value = formatFechaLocal(domingo);
+}
+
+
+
+   function seleccionarMes() {
+    const hoy = new Date();
+    const primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+    const ultimoDia = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+
+    document.getElementById('fecha_inicio').value = formatFechaLocal(primerDia);
+    document.getElementById('fecha_fin').value = formatFechaLocal(ultimoDia);
+}
+
+</script>
