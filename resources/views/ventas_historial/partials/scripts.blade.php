@@ -41,4 +41,25 @@
         });
     });
 
+    @push('scripts')
+            <script>
+                const tablaVentas = $('#tabla-ventas');
+                if (tablaVentas.length) {
+                    tablaVentas.DataTable({
+                        pageLength: 10,
+                        language: {
+                            url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-MX.json'
+                        },
+                        columnDefs: [
+                            { orderable: false, targets: 4 }
+                        ],
+                        initComplete: function () {
+                            tablaVentas.removeClass('d-none');
+                        }
+                    });
+            }
+        </script>
+    @endpush
+
+
 </script>

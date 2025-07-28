@@ -16,7 +16,7 @@ Route::get('/ventas/buscar-clientes', [VentasController::class, 'buscarClientes'
 
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect(Auth::check() ? route('alt-dashboard') : route('login'));
 });
 
 Route::get('/alt-dashboard', function () {
