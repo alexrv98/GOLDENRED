@@ -1,7 +1,7 @@
 <x-layout bodyClass="g-sidenav-show bg-gray-200">
     <x-navbars.sidebar activePage='ventas' />
-    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
 
+    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
         <x-navbars.navs.auth titlePage="Generar Venta" />
 
         <div class="card m-4 p-4">
@@ -9,17 +9,14 @@
 
             <form id="formCrearVenta" action="{{ route('ventas.store') }}" method="POST">
                 @csrf
+
                 <div class="col-md-8 mb-3 position-relative">
                     <label class="form-label fw-bold text-dark">Buscar Cliente por Nombre</label>
-                    <input type="text" id="busqueda_cliente" class="form-control"
-                        placeholder="Escribe el nombre del cliente">
-                    <ul id="resultados_cliente" class="list-group position-absolute w-100" style="z-index: 1000;"></ul>
+                    <select id="busqueda_cliente" class="form-control"></select>
                     <input type="hidden" name="cliente_id" id="cliente_id">
                 </div>
 
-
-
-                <div id="datosCliente" class="d-none">
+                <div id="datosCliente">
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Cliente</label>
@@ -66,7 +63,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Generar Venta</button>
+                    <button type="button" id="btnConfirmarVenta" class="btn btn-primary">Generar Venta</button>
                 </div>
             </form>
         </div>
@@ -74,7 +71,7 @@
         <!-- Historial -->
         <div class="card m-4 p-4">
             <h5>Historial de Ventas de Hoy</h5>
-
+            
             @if($ventasHoy->isEmpty())
                 <p>No hay ventas registradas hoy.</p>
             @else
@@ -102,8 +99,9 @@
 
             <a href="#" class="btn btn-secondary">Ver historial completo</a>
         </div>
-
     </main>
     @include('ventas.partials.scripts')
+    @include('ventas.partials.modal-confirmacion')
+        @include('components.alert-toast')
 
 </x-layout>

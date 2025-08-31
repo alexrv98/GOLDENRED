@@ -13,9 +13,12 @@ class VentasController extends Controller
     public function index()
     {
         // Cargar clientes con paquete (y última venta para info si quieres)
-        $clientes = Cliente::with(['paquete', 'ventas' => function($q) {
-            $q->orderBy('fecha_venta', 'desc')->limit(1);
-        }])->get();
+        $clientes = Cliente::with([
+            'paquete',
+            'ventas' => function ($q) {
+                $q->orderBy('fecha_venta', 'desc')->limit(1);
+            }
+        ])->get();
 
         // Ventas de hoy para historial
         $ventasHoy = Venta::with(['cliente', 'usuario'])
@@ -28,58 +31,58 @@ class VentasController extends Controller
 
     // Método para calcular recargo (si quieres mantenerlo para llamadas AJAX)
     // VentasController.php
-public function calcularRecargo(Cliente $cliente)
-{
-    $fechaHoy = now()->startOfDay();
-    $ultimaVenta = Venta::where('cliente_id', $cliente->id)->orderBy('fecha_venta', 'desc')->first();
+    public function calcularRecargo(Cliente $cliente)
+    {
+        $fechaHoy = now()->startOfDay();
+        $ultimaVenta = Venta::where('cliente_id', $cliente->id)->orderBy('fecha_venta', 'desc')->first();
 
-    $recargo_falta_pago = 0;
-    $diasAtraso = 0;
+        $recargo_falta_pago = 0;
+        $diasAtraso = 0;
 
-    if ($ultimaVenta) {
-        $periodoFinAnterior = Carbon::parse($ultimaVenta->periodo_fin)->startOfDay();
-        $primerDiaDeAtraso = $periodoFinAnterior->copy()->addDay();
+        if ($ultimaVenta) {
+            $periodoFinAnterior = Carbon::parse($ultimaVenta->periodo_fin)->startOfDay();
+            $primerDiaDeAtraso = $periodoFinAnterior->copy()->addDay();
 
-        if ($fechaHoy->greaterThanOrEqualTo($primerDiaDeAtraso)) {
-            $diasAtraso = $primerDiaDeAtraso->diffInDays($fechaHoy) + 1;
+            if ($fechaHoy->greaterThanOrEqualTo($primerDiaDeAtraso)) {
+                $diasAtraso = $primerDiaDeAtraso->diffInDays($fechaHoy) + 1;
 
-            if ($diasAtraso >= 1 && $diasAtraso <= 3) {
-                $recargo_falta_pago = 40;
-            } elseif ($diasAtraso > 3) {
-                $recargo_falta_pago = 140;
+                if ($diasAtraso >= 1 && $diasAtraso <= 3) {
+                    $recargo_falta_pago = 40;
+                } elseif ($diasAtraso > 3) {
+                    $recargo_falta_pago = 140;
+                }
             }
         }
+
+        return response()->json([
+            'recargo' => $recargo_falta_pago,
+            'dias_atraso' => $diasAtraso,
+        ]);
+    }
+    public function buscarClientes(Request $request)
+    {
+        $search = $request->input('q');
+
+        $clientes = Cliente::with('paquete')
+            ->where('nombre', 'like', "%{$search}%")
+            ->limit(10)
+            ->get();
+
+        $resultados = $clientes->map(function ($cliente) {
+            return [
+                'id' => $cliente->id,
+                'text' => $cliente->nombre,
+                'paquete' => [
+                    'nombre' => $cliente->paquete->nombre ?? 'Sin paquete',
+                    'precio' => $cliente->paquete->precio ?? 0,
+                ],
+            ];
+        });
+
+        return response()->json(['results' => $resultados]);
     }
 
-    return response()->json([
-        'recargo' => $recargo_falta_pago,
-        'dias_atraso' => $diasAtraso,
-    ]);
-}
 
-public function buscarClientes(Request $request)
-{
-    $search = $request->input('q', '');
-
-    $clientes = Cliente::with('paquete:id,nombre,precio')
-        ->where('nombre', 'like', "%{$search}%")
-        ->limit(10)
-        ->get();
-
-    $resultados = $clientes->map(function ($cliente) {
-        return [
-            'id' => $cliente->id,
-            'text' => $cliente->nombre,
-            'paquete' => [
-                'nombre' => $cliente->paquete->nombre ?? 'Sin paquete',
-                'precio' => $cliente->paquete->precio ?? 0,
-            ],
-            'dia_cobro' => $cliente->dia_cobro,
-        ];
-    });
-
-    return response()->json(['results' => $resultados]);
-}
 
 
     public function store(Request $request)
@@ -127,7 +130,8 @@ public function buscarClientes(Request $request)
         $total = $subtotal - ($request->descuento ?? 0) + ($request->recargo_domicilio ?? 0) + $recargo_falta_pago;
 
         $periodoInicio = now()->startOfDay();
-        $periodoFin = $periodoInicio->copy()->addMonths($meses)->subDay();
+        $periodoFin = $periodoInicio->copy()->addMonthsNoOverflow($meses);
+
 
         Venta::create([
             'usuario_id' => Auth::id(),

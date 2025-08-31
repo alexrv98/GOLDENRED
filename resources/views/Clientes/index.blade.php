@@ -81,6 +81,9 @@
         {{-- Toast --}}
         @include('components.alert-toast')
         @include('clientes.partials.scripts')
+        @include('components.modales')
+
+        {{-- Loader --}}
 
 
         {{-- Modal dinámico --}}
