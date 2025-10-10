@@ -14,6 +14,10 @@ use App\Http\Middleware\NoCache;
 use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\TelefonoController;
+
+Route::get('/telefonos', [TelefonoController::class, 'index'])->name('telefonos.index');
+
 
 
 

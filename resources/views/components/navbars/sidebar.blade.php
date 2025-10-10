@@ -171,6 +171,17 @@
                     </div>
                 </li>
             @endcan
+
+            <li class="nav-item">
+                <a class="nav-link text-white {{ $activePage == 'telefonos' ? ' active bg-gradient-primary' : '' }}"
+                    href="{{ route('telefonos.index') }}">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">phone</i> {{-- También puedes usar "call" --}}
+                    </div>
+                    <span class="nav-link-text ms-1">Teléfonos</span>
+                </a>
+            </li>
+
         </ul>
     </div>
 
