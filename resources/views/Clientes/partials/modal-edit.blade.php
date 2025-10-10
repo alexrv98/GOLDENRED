@@ -43,16 +43,16 @@
         </div>
 
         <div class="col-md-4 mb-3">
-  <label class="form-label fw-bold text-dark">Paquete</label>
-  <select name="paquete_id" class="form-select border" required>
-    <option value="">-- Selecciona un paquete --</option>
-    @foreach($paquetes as $paquete)
-      <option value="{{ $paquete->id }}" {{ $cliente->paquete_id == $paquete->id ? 'selected' : '' }}>
-        {{ $paquete->nombre }} - ${{ number_format($paquete->precio, 2) }}
-      </option>
-    @endforeach
-  </select>
-</div>
+          <label class="form-label fw-bold text-dark">Paquete</label>
+          <select name="paquete_id" class="form-select border" required>
+            <option value="">-- Selecciona un paquete --</option>
+            @foreach($paquetes as $paquete)
+        <option value="{{ $paquete->id }}" {{ $cliente->paquete_id == $paquete->id ? 'selected' : '' }}>
+          {{ $paquete->nombre }} - ${{ number_format($paquete->precio, 2) }}
+        </option>
+      @endforeach
+          </select>
+        </div>
 
         <div class="col-md-4 mb-3">
           <label class="form-label fw-bold text-dark">Torre</label>
@@ -74,6 +74,13 @@
           <label class="form-label fw-bold text-dark">Dirección IP</label>
           <input type="text" name="IP" class="form-control border" value="{{ $cliente->IP }}">
         </div>
+
+        <!-- Zona -->
+        <div class="col-md-4 mb-3">
+          <label class="form-label fw-bold text-dark">Zona</label>
+          <input type="text" name="zona" class="form-control border" value="{{ $cliente->zona }}">
+        </div>
+
 
         <div class="col-md-4 mb-3">
           <label class="form-label fw-bold text-dark">Dirección</label>
@@ -97,6 +104,10 @@
             <option value="0" {{ !$cliente->activo ? 'selected' : '' }}>Inactivo</option>
           </select>
         </div>
+
+
+
+
 
       </div>
     </div>
@@ -151,3 +162,4 @@
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
   </div>
 </form>
+

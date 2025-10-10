@@ -27,6 +27,7 @@
                                 <th class="text-uppercase text-dark text-xs font-weight-bolder">Teléfono 1</th>
                                 <th class="text-uppercase text-dark text-xs font-weight-bolder">Teléfono 2</th>
                                 <th class="text-uppercase text-dark text-xs font-weight-bolder">Día de cobro</th>
+                                <th class="text-uppercase text-dark text-xs font-weight-bolder">Zona</th>
                                 <th class="text-uppercase text-dark text-xs font-weight-bolder">Referencias</th>
                                 <th class="text-uppercase text-dark text-xs font-weight-bolder">Acciones</th>
                                 <th class="text-uppercase text-dark text-xs font-weight-bolder">Estado</th>
@@ -46,6 +47,9 @@
                                     </td>
                                     <td>
                                         <p class="text-xs mb-0 text-warning">{{ $cliente->dia_cobro }}</p>
+                                    </td>
+                                    <td>
+                                        <p class="text-xs mb-0">{{ $cliente->zona }}</p>
                                     </td>
                                     <td>
                                         <p class="text-xs mb-0" style="white-space: normal;">{{ $cliente->referencias }}</p>

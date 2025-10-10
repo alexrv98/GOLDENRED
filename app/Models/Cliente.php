@@ -28,6 +28,8 @@ class Cliente extends Model
         'torre',
         'panel',
         'activo',
+        'equiposregresados', // NUEVO
+        'zona',    // NUEVO
     ];
 
     protected $casts = [
@@ -57,6 +59,7 @@ class Cliente extends Model
 
         return ['estado' => 'atrasado', 'mensaje' => "Atrasado. Último mes cubierto: {$mesAnio}"];
     }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -75,15 +78,12 @@ class Cliente extends Model
                 'referencias',
                 'torre',
                 'panel',
+                'zona',    // NUEVO
             ])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
     }
 
-
-    /**
-     * Agrega datos personalizados al log (nombre del cliente).
-     */
     public function tapActivity(Activity $activity, string $eventName)
     {
         $activity->properties = $activity->properties->merge([

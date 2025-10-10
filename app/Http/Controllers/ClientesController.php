@@ -33,7 +33,7 @@ class ClientesController extends Controller
     public function editModal($id)
     {
         $cliente = Cliente::findOrFail($id);
-$paquetes = Paquete::select('id', 'nombre', 'precio')->get();
+        $paquetes = Paquete::select('id', 'nombre', 'precio')->get();
         return view('clientes.partials.modal-edit', compact('cliente', 'paquetes'));
     }
 
@@ -60,10 +60,11 @@ $paquetes = Paquete::select('id', 'nombre', 'precio')->get();
             'torre' => 'nullable|string|max:255',
             'panel' => 'nullable|string|max:255',
             'activo' => 'nullable|boolean',
+            'zona' => 'nullable|string|max:255',
         ]);
 
         $data = $request->all();
-        $data['activo'] = true; // por defecto activo
+        $data['activo'] = true;
 
         Cliente::create($data);
 
@@ -94,6 +95,7 @@ $paquetes = Paquete::select('id', 'nombre', 'precio')->get();
             'torre' => 'nullable|string|max:255',
             'panel' => 'nullable|string|max:255',
             'activo' => 'nullable|boolean',
+            'zona' => 'nullable|string|max:255',
         ]);
 
         $cliente = Cliente::findOrFail($id);
@@ -113,6 +115,7 @@ $paquetes = Paquete::select('id', 'nombre', 'precio')->get();
             'torre',
             'panel',
             'activo',
+            'zona',
         ]));
 
         if ($request->has('equipo')) {
