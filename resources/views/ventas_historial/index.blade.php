@@ -7,11 +7,13 @@
         <!-- End Navbar -->
 
         <div class="card m-4">
-        <div class="d-flex justify-content-end p-2">
-    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalExportarVentas">
-        <i class="material-icons">download</i> Exportar Excel
-    </button>
-</div>
+            @can('Exportar ventas')
+            <div class="d-flex justify-content-end p-2">
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalExportarVentas">
+                    <i class="material-icons">download</i> Exportar Excel
+                </button>
+            </div>
+            @endcan
 
             <div class="table-responsive p-3">
                 <table id="tabla-ventas" class="table w-100 d-none">
@@ -32,7 +34,8 @@
                                 <td>{{ $venta->cliente->nombre }}</td>
                                 <td>{{ $venta->usuario->name }}</td>
                                 <td>{{ $venta->created_at->format('Y-m-d') }}
-                                    <br><small>{{ $venta->created_at->format('h:i A') }}</small></td>
+                                    <br><small>{{ $venta->created_at->format('h:i A') }}</small>
+                                </td>
                                 <td>{{ ucfirst($venta->tipo_pago ?? 'N/A') }}</td>
                                 <td>${{ number_format($venta->total, 2) }}</td>
                                 <td class="text-center">

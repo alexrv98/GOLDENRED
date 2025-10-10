@@ -16,10 +16,10 @@ class AuditoriaController extends Controller
     }
     public function index()
     {
-        $logs = Activity::with('causer') // trae el usuario que hizo la acción
-            ->latest()
-            ->limit(200) // puedes ajustar el límite
-            ->get();
+        $logs = Activity::with('causer')
+    ->latest()
+    ->get();
+
 
         return view('auditoria.index', compact('logs'));
     }
