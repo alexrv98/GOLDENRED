@@ -42,14 +42,21 @@
                     @endif
 
 
-                    <div class="row mb-3">
-                        <div class="col-md-12">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
                             <label class="form-label">
                                 <span class="material-icons-round align-middle me-1">person</span> Cliente
                             </label>
                             <input type="text" id="nombre_cliente" class="form-control border rounded-2 px-2" readonly>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
+                            <label class="form-label">
+                                <span class="material-icons-round align-middle me-1">label</span> Tipo de Cliente
+                            </label>
+                            <div id="tipo_cliente_badge" class="mt-1"></div>
+                        </div>
+
+                        <div class="col-md-4">
                             <label class="form-label">
                                 <span class="material-icons-round align-middle me-1">event</span> Día de Pago
                             </label>
@@ -73,14 +80,14 @@
                                 readonly>
                         </div>
                         <div class="col-md-4">
-    <label class="form-label">Meses</label>
-    <select name="meses" id="meses" class="form-select border rounded-2 px-2" required>
-        @for ($i = 1; $i <= 12; $i++)
-            <option value="{{ $i }}">{{ $i }}</option>
-        @endfor
-    </select>
-    <small id="promoMensaje" class="text-success mt-2 d-none"></small>
-</div>
+                            <label class="form-label">Meses</label>
+                            <select name="meses" id="meses" class="form-select border rounded-2 px-2" required>
+                                @for ($i = 1; $i <= 12; $i++)
+                                    <option value="{{ $i }}">{{ $i }}</option>
+                                @endfor
+                            </select>
+                            <small id="promoMensaje" class="text-success mt-2 d-none"></small>
+                        </div>
 
                         <div class="col-md-4">
                             <label class="form-label">Tipo de Pago</label>
@@ -128,14 +135,14 @@
                             <input type="number" id="total" class="form-control border rounded-2 px-2" readonly>
                         </div>
                     </div>
-@can('Crear ventas')
-                    {{-- Botón --}}
-                    <div class="text-end">
-                        <button type="button" id="btnConfirmarVenta" class="btn btn-primary">
-                            <span class="material-icons-round align-middle me-1">check_circle</span>
-                            {{ $ventaEditar ? 'Actualizar Venta' : 'Generar Venta' }}
-                        </button>
-@endcan
+                    @can('Crear ventas')
+                        {{-- Botón --}}
+                        <div class="text-end">
+                            <button type="button" id="btnConfirmarVenta" class="btn btn-primary">
+                                <span class="material-icons-round align-middle me-1">check_circle</span>
+                                {{ $ventaEditar ? 'Actualizar Venta' : 'Generar Venta' }}
+                            </button>
+                    @endcan
                     </div>
                 </div>
             </form>
@@ -176,20 +183,20 @@
                                         <span class="material-icons">visibility</span>
                                     </button>
                                     @can('Editar ventas')
-                                    <a href="{{ route('ventas.index', ['editar' => $venta->id]) }}"
-                                        class="btn btn-link text-warning p-0 mx-1" title="Editar">
-                                        <span class="material-icons">edit</span>
-                                    </a>
+                                        <a href="{{ route('ventas.index', ['editar' => $venta->id]) }}"
+                                            class="btn btn-link text-warning p-0 mx-1" title="Editar">
+                                            <span class="material-icons">edit</span>
+                                        </a>
                                     @endcan
 
                                     @can('Eliminar ventas')
 
 
-                                    <button type="button" class="btn btn-link text-danger p-0 mx-1 btn-modalEliminarVenta"
-                                        data-id="{{ $venta->id }}" data-cliente="{{ $venta->cliente->nombre }}"
-                                        title="Eliminar">
-                                        <span class="material-icons">delete_forever</span>
-                                    </button>
+                                        <button type="button" class="btn btn-link text-danger p-0 mx-1 btn-modalEliminarVenta"
+                                            data-id="{{ $venta->id }}" data-cliente="{{ $venta->cliente->nombre }}"
+                                            title="Eliminar">
+                                            <span class="material-icons">delete_forever</span>
+                                        </button>
                                     @endcan
                                 </td>
 
@@ -214,27 +221,27 @@
             style="width:0;height:0;border:0;visibility:hidden;">
         </iframe>
     @endif
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const inputMeses = document.getElementById('meses');
-        const promoMensaje = document.getElementById('promoMensaje');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputMeses = document.getElementById('meses');
+            const promoMensaje = document.getElementById('promoMensaje');
 
-        inputMeses.addEventListener('input', function () {
-            const valor = parseInt(this.value);
+            inputMeses.addEventListener('input', function () {
+                const valor = parseInt(this.value);
 
-            if (valor === 6) {
-                promoMensaje.textContent = '🎁 ¡Promoción activa! Pagas 6 meses y recibes 1 mes gratis.';
-                promoMensaje.classList.remove('d-none');
-            } else if (valor === 12) {
-                promoMensaje.textContent = '🎁 ¡Promoción activa! Pagas 12 meses y recibes 2 meses gratis.';
-                promoMensaje.classList.remove('d-none');
-            } else {
-                promoMensaje.classList.add('d-none');
-                promoMensaje.textContent = '';
-            }
+                if (valor === 6) {
+                    promoMensaje.textContent = '🎁 ¡Promoción activa! Pagas 6 meses y recibes 1 mes gratis.';
+                    promoMensaje.classList.remove('d-none');
+                } else if (valor === 12) {
+                    promoMensaje.textContent = '🎁 ¡Promoción activa! Pagas 12 meses y recibes 2 meses gratis.';
+                    promoMensaje.classList.remove('d-none');
+                } else {
+                    promoMensaje.classList.add('d-none');
+                    promoMensaje.textContent = '';
+                }
+            });
         });
-    });
-</script>
+    </script>
 
 
 

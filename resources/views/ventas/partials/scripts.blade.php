@@ -28,14 +28,32 @@
             $('#nombre_cliente').val(data.text);
             $('#nombre_paquete').val(data.paquete.nombre);
             $('#precio_paquete').val(data.paquete.precio);
-            $('#dia_pago').val(data.dia_pago); 
+            $('#dia_pago').val(data.dia_pago);
+            // Mostrar tipo de cliente como badge
+            const tipo = data.tipo || 'C'; // fallback por si no viene
+
+            let badgeColor = 'secondary';
+            let badgeLabel = 'Tipo C';
+
+            if (tipo === 'A') {
+                badgeColor = 'danger';
+                badgeLabel = 'Tipo A';
+            } else if (tipo === 'B') {
+                badgeColor = 'warning';
+                badgeLabel = 'Tipo B';
+            }
+
+            $('#tipo_cliente_badge').html(`
+    <span class="badge bg-${badgeColor} text-white text-xs">${badgeLabel}</span>
+`);
+
 
 
             $('#meses').val(1);
             $('#descuento').val(0);
             $('#recargo_domicilio').val(0);
             $('#recargo_falta_pago').val(0);
-            
+
 
             const info = $('#info_falta_pago');
             info.hide().removeClass('text-danger text-success').text('');
@@ -168,34 +186,35 @@
         });
 
         btnEnviar.addEventListener('click', function () {
-    // Desactivar el botón inmediatamente
-    this.disabled = true;
+            // Desactivar el botón inmediatamente
+            this.disabled = true;
 
-    // Cambiar texto o icono si deseas retroalimentación visual
-    this.innerHTML = '<i class="material-icons me-1">hourglass_top</i> Procesando...';
+            // Cambiar texto o icono si deseas retroalimentación visual
+            this.innerHTML = '<i class="material-icons me-1">hourglass_top</i> Procesando...';
 
-    // Enviar el formulario
-    document.getElementById('formCrearVenta').submit();
-});
+            // Enviar el formulario
+            document.getElementById('formCrearVenta').submit();
+        });
 
     });
 </script>
 @if($ventaEditar)
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    $('#cliente_id').val({{ $ventaEditar->cliente->id }});
-    $('#nombre_cliente').val(@json($ventaEditar->cliente->nombre));
-    $('#nombre_paquete').val(@json($ventaEditar->cliente->paquete->nombre ?? 'Sin paquete'));
-    $('#precio_paquete').val({{ $ventaEditar->cliente->paquete->precio ?? 0 }});
-    $('#meses').val({{ $ventaEditar->meses }});
-    $('#tipo_pago').val(@json($ventaEditar->tipo_pago));
-    $('#descuento').val({{ $ventaEditar->descuento }});
-    $('#recargo_domicilio').val({{ $ventaEditar->recargo_domicilio }});
-    $('#recargo_falta_pago').val({{ $ventaEditar->recargo_falta_pago ?? 0 }});
-    $('#dia_pago').val({{ $ventaEditar->cliente->dia_cobro ?? 1 }});
-    $('#datosCliente').removeClass('d-none');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            $('#cliente_id').val({{ $ventaEditar->cliente->id }});
+            $('#nombre_cliente').val(@json($ventaEditar->cliente->nombre));
+            $('#nombre_paquete').val(@json($ventaEditar->cliente->paquete->nombre ?? 'Sin paquete'));
+            $('#precio_paquete').val({{ $ventaEditar->cliente->paquete->precio ?? 0 }});
+            $('#meses').val({{ $ventaEditar->meses }});
+            $('#tipo_pago').val(@json($ventaEditar->tipo_pago));
+            $('#descuento').val({{ $ventaEditar->descuento }});
+            $('#recargo_domicilio').val({{ $ventaEditar->recargo_domicilio }});
+            $('#recargo_falta_pago').val({{ $ventaEditar->recargo_falta_pago ?? 0 }});
+            $('#dia_pago').val({{ $ventaEditar->cliente->dia_cobro ?? 1 }});
 
-    calcularTotal(); 
-});
-</script>
+            $('#datosCliente').removeClass('d-none');
+
+            calcularTotal();
+        });
+    </script>
 @endif

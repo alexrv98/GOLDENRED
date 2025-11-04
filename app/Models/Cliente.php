@@ -30,6 +30,7 @@ class Cliente extends Model
         'activo',
         'equiposregresados', // NUEVO
         'zona',    // NUEVO
+        'tipo',
     ];
 
     protected $casts = [
@@ -78,7 +79,8 @@ class Cliente extends Model
                 'referencias',
                 'torre',
                 'panel',
-                'zona',    // NUEVO
+                'zona',
+                'tipo',    // NUEVO
             ])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();

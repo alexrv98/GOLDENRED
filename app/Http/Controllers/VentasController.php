@@ -54,6 +54,7 @@ class VentasController extends Controller
             return [
                 'id' => $cliente->id,
                 'text' => $cliente->nombre,
+                'tipo' => $cliente->tipo, // 👈 necesario
                 'dia_pago' => $cliente->dia_cobro,
                 'paquete' => [
                     'nombre' => $cliente->paquete->nombre ?? 'Sin paquete',
@@ -138,9 +139,10 @@ class VentasController extends Controller
         'periodo_fin' => $periodoFin,
         'tipo_pago' => $request->tipo_pago,
     ]);
-
-    return redirect()->route('ventas.index')
+return redirect()->route('ventas.index')
         ->with('venta_id_para_imprimir', $venta->id);
+
+
 }
 
 

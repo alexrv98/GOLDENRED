@@ -35,49 +35,44 @@
                         </thead>
                         <tbody>
                             @foreach ($clientes as $cliente)
-                                <tr>
-                                    <td>
-                                        <h6 class="mb-0 text-xs">{{ $cliente->nombre }}</h6>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs mb-0">{{ $cliente->telefono1 }}</p>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs mb-0">{{ $cliente->telefono2 }}</p>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs mb-0 text-warning">{{ $cliente->dia_cobro }}</p>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs mb-0">{{ $cliente->zona }}</p>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs mb-0" style="white-space: normal;">{{ $cliente->referencias }}</p>
-                                    </td>
-                                    <td class="text-center">
-                                        
-                                            <button class="btn btn-link text-success p-0 mx-1 btn-modal" title="Editar"
-                                                data-url="{{ route('clientes.edit-modal', $cliente->id) }}">
-                                                <span class="material-icons">edit</span>
-                                            </button>
-                                        
-                                       {{--  @can('Eliminar clientes')
-                                            <button class="btn btn-link text-danger p-0 mx-1 btn-modal" title="Eliminar"
-                                                data-url="{{ route('clientes.delete-modal', $cliente->id) }}">
-                                                <span class="material-icons">delete_forever</span>
-                                            </button>
-                                        @endcan
-                                         --}}
-                                    </td>
-                                    <td>
-                                        @if ($cliente->activo)
-                                            <span class="badge bg-success text-white text-xs">Activo</span>
-                                            @else
-                                            <span class="badge bg-secondary text-white text-xs">Inactivo</span>
-                                        @endif
-                                    </td>             
-                                </tr>
-                            @endforeach
+    <tr>
+        <td>
+    <h6 class="mb-0 text-xs {{ $cliente->tipo === 'A' ? 'text-danger' : '' }}">
+        {{ $cliente->nombre }}
+    </h6>
+</td>
+
+        <td>
+            <p class="text-xs mb-0">{{ $cliente->telefono1 }}</p>
+        </td>
+        <td>
+            <p class="text-xs mb-0">{{ $cliente->telefono2 }}</p>
+        </td>
+        <td>
+            <p class="text-xs mb-0 text-warning">{{ $cliente->dia_cobro }}</p>
+        </td>
+        <td>
+            <p class="text-xs mb-0">{{ $cliente->zona }}</p>
+        </td>
+        <td>
+            <p class="text-xs mb-0" style="white-space: normal;">{{ $cliente->referencias }}</p>
+        </td>
+        <td class="text-center">
+            <button class="btn btn-link text-success p-0 mx-1 btn-modal" title="Editar"
+                data-url="{{ route('clientes.edit-modal', $cliente->id) }}">
+                <span class="material-icons">edit</span>
+            </button>
+        </td>
+        <td>
+            @if ($cliente->activo)
+                <span class="badge bg-success text-white text-xs">Activo</span>
+            @else
+                <span class="badge bg-secondary text-white text-xs">Inactivo</span>
+            @endif
+        </td>
+    </tr>
+@endforeach
+
                         </tbody>
                     </table>
                 @else

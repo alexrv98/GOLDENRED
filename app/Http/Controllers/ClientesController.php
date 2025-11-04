@@ -44,32 +44,37 @@ class ClientesController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'nombre' => 'required|string|max:120',
-            'telefono1' => 'nullable|string|max:20',
-            'telefono2' => 'nullable|string|max:20',
-            'fecha_contrato' => 'required|date',
-            'dia_cobro' => 'required|integer|min:1|max:31',
-            'paquete_id' => 'nullable|exists:paquetes,id',
-            'Mac' => 'nullable|string|max:255',
-            'IP' => 'nullable|string|max:255',
-            'direccion' => 'nullable|string|max:255',
-            'coordenadas' => 'nullable|string|max:60',
-            'referencias' => 'nullable|string',
-            'torre' => 'nullable|string|max:255',
-            'panel' => 'nullable|string|max:255',
-            'activo' => 'nullable|boolean',
-            'zona' => 'nullable|string|max:255',
-        ]);
+{
+    // Asignar tipo B por defecto
+    $request->merge(['tipo' => 'B']);
 
-        $data = $request->all();
-        $data['activo'] = true;
+    $request->validate([
+        'nombre' => 'required|string|max:120',
+        'telefono1' => 'nullable|string|max:20',
+        'telefono2' => 'nullable|string|max:20',
+        'fecha_contrato' => 'required|date',
+        'dia_cobro' => 'required|integer|min:1|max:31',
+        'paquete_id' => 'nullable|exists:paquetes,id',
+        'Mac' => 'nullable|string|max:255',
+        'IP' => 'nullable|string|max:255',
+        'direccion' => 'nullable|string|max:255',
+        'coordenadas' => 'nullable|string|max:60',
+        'referencias' => 'nullable|string',
+        'torre' => 'nullable|string|max:255',
+        'panel' => 'nullable|string|max:255',
+        'activo' => 'nullable|boolean',
+        'zona' => 'nullable|string|max:255',
+        'tipo' => 'required|in:A,B,C', // sigue siendo requerido, pero ya lo forzamos a B
+    ]);
 
-        Cliente::create($data);
+    $data = $request->all();
+    $data['activo'] = true;
 
-        return redirect()->route('clientes.index')->with('success', 'Cliente creado exitosamente.');
-    }
+    Cliente::create($data);
+
+    return redirect()->route('clientes.index')->with('success', 'Cliente creado exitosamente.');
+}
+
 
     public function edit($id)
     {
@@ -96,6 +101,7 @@ class ClientesController extends Controller
             'panel' => 'nullable|string|max:255',
             'activo' => 'nullable|boolean',
             'zona' => 'nullable|string|max:255',
+            'tipo' => 'required|in:A,B,C', // ✅ nuevo campo
         ]);
 
         $cliente = Cliente::findOrFail($id);
@@ -116,6 +122,7 @@ class ClientesController extends Controller
             'panel',
             'activo',
             'zona',
+            'tipo', // ✅ nuevo campo
         ]));
 
         if ($request->has('equipo')) {

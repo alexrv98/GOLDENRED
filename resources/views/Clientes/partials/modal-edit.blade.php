@@ -41,16 +41,26 @@
           <input type="number" name="dia_cobro" class="form-control border" min="1" max="31"
             value="{{ $cliente->dia_cobro }}" required>
         </div>
+        
+        <div class="col-md-4 mb-3">
+          <label class="form-label fw-bold text-dark">Tipo de Cliente</label>
+          <select name="tipo" class="form-select border" required>
+            <option value="A" {{ $cliente->tipo == 'A' ? 'selected' : '' }}>Tipo A</option>
+            <option value="B" {{ $cliente->tipo == 'B' ? 'selected' : '' }}>Tipo B</option>
+            <option value="C" {{ $cliente->tipo == 'C' ? 'selected' : '' }}>Tipo C</option>
+          </select>
+        </div>
+
 
         <div class="col-md-4 mb-3">
           <label class="form-label fw-bold text-dark">Paquete</label>
           <select name="paquete_id" class="form-select border" required>
             <option value="">-- Selecciona un paquete --</option>
             @foreach($paquetes as $paquete)
-        <option value="{{ $paquete->id }}" {{ $cliente->paquete_id == $paquete->id ? 'selected' : '' }}>
-          {{ $paquete->nombre }} - ${{ number_format($paquete->precio, 2) }}
-        </option>
-      @endforeach
+              <option value="{{ $paquete->id }}" {{ $cliente->paquete_id == $paquete->id ? 'selected' : '' }}>
+                {{ $paquete->nombre }} - ${{ number_format($paquete->precio, 2) }}
+              </option>
+            @endforeach
           </select>
         </div>
 
@@ -155,11 +165,10 @@
   <!-- PIE DE MODAL -->
   <div class="modal-footer border-0" translate="no">
     @can('Editar clientes')
-    <button type="submit" class="btn btn-warning">
-      <i class="material-icons align-middle">save</i> Actualizar
-    </button>
-  @endcan
+      <button type="submit" class="btn btn-warning">
+        <i class="material-icons align-middle">save</i> Actualizar
+      </button>
+    @endcan
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
   </div>
 </form>
-
