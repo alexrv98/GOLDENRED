@@ -53,11 +53,6 @@ Route::middleware(['auth', NoCache::class,])->group(function () {
     Route::get('/tickets/perfil/{id}', [TicketController::class, 'perfil'])->name('ticket.perfil');
     Route::get('/ticket/perfil/{id}', [TicketController::class, 'reimprimirPerfil'])
     ->name('ticket.perfil.reimprimir');
-Route::get('/platforms/historial', [PlatformHistorialController::class, 'index'])
-    ->name('platforms_historial.index');
-
-Route::get('/platforms/historial/data', [PlatformHistorialController::class, 'data'])
-    ->name('historial.plataformas.data');
 
 
 
