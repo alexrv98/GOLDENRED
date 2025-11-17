@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Venta;
+use App\Models\ProfileAssignment;
+use App\Models\Profile;
 
 
 class TicketController extends Controller
@@ -60,6 +62,27 @@ class TicketController extends Controller
 
         return response($html);
     }
+
+    public function perfil($id)
+    {
+        $assignment = ProfileAssignment::with('profile.account.platform', 'user')
+            ->findOrFail($id);
+
+        return view('tickets.perfil', compact('assignment'));
+    }
+
+   public function reimprimirPerfil($profileId)
+{
+    $assignment = ProfileAssignment::with('profile.account.platform', 'user')
+        ->where('profile_id', $profileId)
+        ->orderBy('created_at', 'desc')
+        ->firstOrFail();
+
+    // Usa la misma vista de impresión
+    return view('tickets.perfil', compact('assignment'));
+}
+
+
 
 
 }

@@ -15,8 +15,30 @@ use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TelefonoController;
+use App\Http\Controllers\PlatformHistorialController;
 
-Route::get('/telefonos', [TelefonoController::class, 'index'])->name('telefonos.index');
+use App\Http\Controllers\TicketProfileController;
+use App\Http\Controllers\{
+    PlatformController,
+    AccountController,
+    AccountProfileController,
+    ProfileAssignmentController
+};
+
+Route::resource('platforms', PlatformController::class);
+Route::resource('account-profiles', AccountProfileController::class);
+Route::get('platforms/{platform}/accounts', [AccountController::class, 'byPlatform'])
+    ->name('platforms.accounts');
+Route::get('accounts/{account}/profiles', [AccountProfileController::class, 'byAccount'])
+    ->name('accounts.profiles');
+Route::post('/profiles/{profile}/assign', [AccountProfileController::class, 'assign'])
+    ->name('profiles.assign');
+Route::post('/profiles/{profile}/unassign', [AccountProfileController::class, 'unassign'])
+    ->name('profiles.unassign');
+
+
+
+Route::get('/telefonos', action: [TelefonoController::class, 'index'])->name('telefonos.index');
 
 
 
@@ -25,10 +47,27 @@ Route::get('/', function () {
     return redirect(Auth::check() ? route('alt-dashboard') : route('login'));
 });
 
-
 Route::middleware(['auth', NoCache::class,])->group(function () {
 
-    // Dashboard
+
+    Route::get('/tickets/perfil/{id}', [TicketController::class, 'perfil'])->name('ticket.perfil');
+    Route::get('/ticket/perfil/{id}', [TicketController::class, 'reimprimirPerfil'])
+    ->name('ticket.perfil.reimprimir');
+Route::get('/platforms/historial', [PlatformHistorialController::class, 'index'])
+    ->name('platforms_historial.index');
+
+Route::get('/platforms/historial/data', [PlatformHistorialController::class, 'data'])
+    ->name('historial.plataformas.data');
+
+
+
+    
+
+
+
+    Route::patch('/account-profiles/{profile}/unassign', [AccountProfileController::class, 'unassign'])
+    ->name('account-profiles.unassign');
+    Route::get('/plataformas/historial', [ProfileAssignmentController::class, 'index'])->name('plataformas_historial.index');
     Route::get('/alt-dashboard', DashboardController::class)->name('alt-dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -65,7 +104,8 @@ Route::middleware(['auth', NoCache::class,])->group(function () {
     Route::put('/ventas/{venta}', [VentasController::class, 'update'])->name('ventas.update');
 
     Route::get('/ventas/exportar', [ExportarVentasController::class, 'exportar'])->name('ventas.exportar');
-
+    Route::resource('accounts', AccountController::class);
+    Route::post('/accounts/{account}/change-password', [AccountController::class, 'changePassword'])->name('accounts.changePassword');
 
 });
 
@@ -88,6 +128,7 @@ Route::get('/ventas/{venta}/ticket-c/{cliente}', [TicketController::class, 'tipo
 Route::get('/ventas/{venta}/ticket-generico/{cliente}', [TicketController::class, 'generico'])->name('tickets.generico');
 
 Route::get('/ventas/{id}/ticket', [TicketController::class, 'reimprimir'])->name('ventas.ticket');
+
 
 
 require __DIR__ . '/auth.php';

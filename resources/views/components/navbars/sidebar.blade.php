@@ -182,6 +182,39 @@
                 </a>
             </li>
 
+            <li class="nav-item">
+                <a class="nav-link text-white {{ in_array($activePage, ['platforms', 'platforms_historial']) ? 'active bg-gradient-primary' : '' }}"
+                    data-bs-toggle="collapse" href="#platformsSubmenu" role="button" aria-expanded="false"
+                    aria-controls="platformsSubmenu">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">dashboard</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Plataforma</span>
+                </a>
+                <div class="collapse {{ in_array($activePage, ['platforms', 'platforms_historial']) ? 'show' : '' }}"
+                    id="platformsSubmenu">
+                    <ul class="nav ms-4 flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ $activePage == 'platforms' ? 'active' : '' }}"
+                                href="{{ route('platforms.index') }}">
+                                <div class="d-flex align-items-center">
+                                    <i class="material-icons opacity-10 me-2">list</i>
+                                    <span class="nav-link-text">Plataformas</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ $activePage == 'platforms_historial' ? 'active' : '' }}"
+                                href="{{ route('plataformas_historial.index') }}">
+                                <div class="d-flex align-items-center">
+                                    <i class="material-icons opacity-10 me-2">history</i>
+                                    <span class="nav-link-text">Historial</span>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
         </ul>
     </div>
 
