@@ -55,7 +55,6 @@ Route::middleware(['auth', NoCache::class,])->group(function () {
     ->name('ticket.perfil.reimprimir');
 
 
-
     
 
 
