@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Yajra\DataTables\Facades\DataTables;
 use App\Models\Profile;
 use App\Models\Account;
 use App\Models\ProfileAssignment;
@@ -151,4 +151,55 @@ class AccountProfileController extends Controller
 
         return redirect()->back()->with('success', 'Perfil desasignado y registrado en historial.');
     }
+
+
+    public function dataPerfilesOcupados(Request $request)
+{
+    $query = Profile::select(
+        'profiles.id',
+        'profiles.name as profile_name',
+        'profiles.current_holder',
+        'profiles.telefono',
+        'profiles.assigned_since',
+        'profiles.notes',
+        'accounts.email as account_email',
+        'platforms.name as platform_name'
+    )
+    ->join('accounts', 'accounts.id', '=', 'profiles.account_id')
+    ->join('platforms', 'platforms.id', '=', 'accounts.platform_id')
+    ->where('profiles.status', 'assigned');
+
+    return DataTables::eloquent($query)
+        ->editColumn('platform_name', fn($row) => "<p class='text-xs text-center mb-0'>{$row->platform_name}</p>")
+        ->editColumn('account_email', fn($row) => "<p class='text-xs text-center mb-0'>{$row->account_email}</p>")
+        ->editColumn('profile_name', fn($row) => "<p class='text-xs text-center mb-0'>{$row->profile_name}</p>")
+        ->editColumn('current_holder', fn($row) => "<p class='text-xs text-center mb-0'>{$row->current_holder}</p>")
+        ->editColumn('telefono', fn($row) => "<p class='text-xs text-center mb-0'>" . ($row->telefono ?? '-') . "</p>")
+        ->editColumn('assigned_since', fn($row) => "<p class='text-xs text-center mb-0'>" . 
+            ($row->assigned_since ? $row->assigned_since->format('d/m/Y H:i') : '-') . "</p>")
+        ->editColumn('notes', fn($row) => "<p class='text-xs text-center mb-0'>" . ($row->notes ?? '-') . "</p>")
+        ->addColumn('acciones', function ($row) {
+            return '
+                <a href="javascript:void(0)" onclick="reimprimirPerfil('.$row->id.')" 
+                    class="btn btn-link text-info p-0 mx-1" title="Reimprimir ticket">
+                    <span class="material-icons">print</span>
+                </a>
+
+                <form action="'.route('account-profiles.unassign', $row->id).'" method="POST"
+                    class="d-inline" onsubmit="return confirm(\'¿Seguro que deseas desocupar este perfil?\')">
+                    '.csrf_field().method_field('PATCH').'
+                    <button type="submit" class="btn btn-link text-warning p-0 mx-1" title="Desocupar perfil">
+                        <span class="material-icons">logout</span>
+                    </button>
+                </form>
+            ';
+        })
+        ->rawColumns([
+            'platform_name', 'account_email', 'profile_name', 'current_holder',
+            'telefono', 'assigned_since', 'notes', 'acciones'
+        ])
+        ->toJson(JSON_UNESCAPED_UNICODE);
+}
+
+    
 }

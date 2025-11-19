@@ -22,26 +22,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($assignments as $registro)
-                            <tr>
-                                <td class="text-center">{{ $registro->profile->account->platform->name }}</td>
-                                <td class="text-center">{{ $registro->profile->account->email }}</td>
-                                <td class="text-center">{{ $registro->profile->name }}</td>
-                                <td class="text-center">{{ $registro->customer_name }}</td>
-                                <td class="text-center">{{ $registro->telefono ?? '-' }}</td>
-                                <td class="text-center">{{ $registro->started_at }}</td>
-                                <td class="text-center">{{ $registro->ended_at }}</td>
-                                <td class="text-center">{{ $registro->user->name ?? 'N/A' }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="text-center text-xs">No hay registros finalizados.</td>
-                            </tr>
-                        @endforelse
+
                     </tbody>
                 </table>
             </div>
         </div>
     </main>
-    
+    @include('platforms_historial.partials.scripts')
 </x-layout>

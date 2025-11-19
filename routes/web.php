@@ -33,9 +33,6 @@ Route::get('accounts/{account}/profiles', [AccountProfileController::class, 'byA
     ->name('accounts.profiles');
 Route::post('/profiles/{profile}/assign', [AccountProfileController::class, 'assign'])
     ->name('profiles.assign');
-Route::post('/profiles/{profile}/unassign', [AccountProfileController::class, 'unassign'])
-    ->name('profiles.unassign');
-
 
 
 Route::get('/telefonos', action: [TelefonoController::class, 'index'])->name('telefonos.index');
@@ -53,9 +50,10 @@ Route::middleware(['auth', NoCache::class,])->group(function () {
     Route::get('/tickets/perfil/{id}', [TicketController::class, 'perfil'])->name('ticket.perfil');
     Route::get('/ticket/perfil/{id}', [TicketController::class, 'reimprimirPerfil'])
     ->name('ticket.perfil.reimprimir');
-
-
-    
+    Route::get('/platforms-historial/data', [ProfileAssignmentController::class, 'data'])
+    ->name('platforms_historial.data');
+    Route::get('/platforms/perfiles-ocupados/data', [AccountProfileController::class, 'dataPerfilesOcupados'])
+    ->name('platforms.occupied-profiles.data');
 
 
 

@@ -76,51 +76,42 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($profiles as $profile)
-                            <tr>
-                                <td class="text-center">{{ $profile->account->platform->name }}</td>
-                                <td class="text-center">{{ $profile->account->email }}</td>
-                                <td class="text-center">{{ $profile->name }}</td>
-                                <td class="text-center">{{ $profile->current_holder }}</td>
-                                <td class="text-center">{{ $profile->telefono ?? '-' }}</td>
-
-                                <td class="text-center">
-                                    {{ $profile->assigned_since ? $profile->assigned_since->format('d/m/Y H:i') : '-' }}
-                                </td>
-                                <td class="text-center">{{ $profile->notes ?? '-' }}</td>
-                                <td class="text-center">
-                                    <a href="javascript:void(0)" onclick="reimprimirPerfil({{ $profile->id }})"
-                                        class="btn btn-link text-info p-0 mx-1" title="Reimprimir ticket">
-                                        <span class="material-icons">print</span>
-                                    </a>
-
-
-                                    <!-- Botón para desocupar -->
-                                    <form action="{{ route('account-profiles.unassign', $profile->id) }}" method="POST"
-                                        class="d-inline">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="btn btn-link text-warning p-0 mx-1"
-                                            title="Desocupar perfil"
-                                            onclick="return confirm('¿Seguro que deseas desocupar este perfil?')">
-                                            <span class="material-icons">logout</span>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="text-center text-xs">No hay perfiles ocupados.</td>
-                            </tr>
-                        @endforelse
+                      
                     </tbody>
                 </table>
             </div>
         </div>
         <div id="iframeReimpresionContainer" style="display:none;"></div>
         
+        
 
 
 
     </main>
+    
 </x-layout>
+<script>
+$(document).ready(function() {
+    $('#tabla-perfiles').DataTable({
+        processing: false,
+        serverSide: false,
+        ajax: '{{ route("platforms.occupied-profiles.data") }}',
+        pageLength: 10,
+        deferRender: true,
+        columns: [
+            { data: 'platform_name', className: 'text-center' },
+            { data: 'account_email', className: 'text-center' },
+            { data: 'profile_name', className: 'text-center' },
+            { data: 'current_holder', className: 'text-center' },
+            { data: 'telefono', className: 'text-center' },
+            { data: 'assigned_since', className: 'text-center' },
+            { data: 'notes', className: 'text-center' }, 
+            { data: 'acciones', orderable: false, searchable: false, className: 'text-center' }
+        ],
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-MX.json'
+        }
+    });
+});
+
+</script>

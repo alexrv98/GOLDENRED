@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Yajra\DataTables\Facades\DataTables;
 use App\Models\ProfileAssignment;
 use App\Models\Profile;
 use Illuminate\Http\Request;
@@ -127,4 +127,41 @@ class ProfileAssignmentController extends Controller
 
         return redirect()->back()->with('success', 'Perfil asignado correctamente y registrado en historial.');
     }
+
+
+    public function data(Request $request)
+{
+    $query = ProfileAssignment::select(
+        'profile_assignments.id',
+        'profile_assignments.customer_name',
+        'profile_assignments.telefono',
+        'profile_assignments.started_at',
+        'profile_assignments.ended_at',
+        'profile_assignments.sold_by_user_id',
+        'profiles.name as profile_name',
+        'accounts.email as account_email',
+        'platforms.name as platform_name',
+        'users.name as vendedor'
+    )
+    ->join('profiles', 'profiles.id', '=', 'profile_assignments.profile_id')
+    ->join('accounts', 'accounts.id', '=', 'profiles.account_id')
+    ->join('platforms', 'platforms.id', '=', 'accounts.platform_id')
+    ->leftJoin('users', 'users.id', '=', 'profile_assignments.sold_by_user_id');
+
+    return DataTables::eloquent($query)
+        ->editColumn('platform_name', fn($row) => "<p class='text-xs text-center mb-0'>{$row->platform_name}</p>")
+        ->editColumn('account_email', fn($row) => "<p class='text-xs text-center mb-0'>{$row->account_email}</p>")
+        ->editColumn('profile_name', fn($row) => "<p class='text-xs text-center mb-0'>{$row->profile_name}</p>")
+        ->editColumn('customer_name', fn($row) => "<p class='text-xs text-center mb-0'>{$row->customer_name}</p>")
+        ->editColumn('telefono', fn($row) => "<p class='text-xs text-center mb-0'>" . ($row->telefono ?? '-') . "</p>")
+        ->editColumn('started_at', fn($row) => "<p class='text-xs text-center mb-0'>{$row->started_at}</p>")
+        ->editColumn('ended_at', fn($row) => "<p class='text-xs text-center mb-0'>" . ($row->ended_at ?? '-') . "</p>")
+        ->editColumn('vendedor', fn($row) => "<p class='text-xs text-center mb-0'>" . ($row->vendedor ?? 'N/A') . "</p>")
+        ->rawColumns([
+            'platform_name', 'account_email', 'profile_name',
+            'customer_name', 'telefono', 'started_at', 'ended_at', 'vendedor'
+        ])
+        ->make(true);
+}
+
 }
