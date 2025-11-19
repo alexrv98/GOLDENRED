@@ -155,38 +155,46 @@ return redirect()->route('ventas.index')
         return view('ventas_historial.index', compact('ventas'));
     }
 
-    public function corte(Request $request)
-    {
-        $fecha = $request->input('fecha') ?? now()->toDateString();
-        $usuario_id = $request->input('usuario_id');
+   public function corte(Request $request)
+{
+    $fecha = $request->input('fecha') ?? now()->toDateString();
+    $usuario_id = $request->input('usuario_id');
+    $tipo_cliente = $request->input('tipo_cliente'); // 👈 nuevo campo
 
-        $query = Venta::with(['cliente', 'usuario'])
-            ->whereDate('created_at', $fecha);
+    $query = Venta::with(['cliente', 'usuario'])
+        ->whereDate('created_at', $fecha);
 
-        if ($usuario_id) {
-            $query->where('usuario_id', $usuario_id);
-        }
-
-        $ventas = $query->orderBy('fecha_venta', 'desc')->get();
-        $totalEfectivo = $ventas->where('tipo_pago', 'Efectivo')->sum('total');
-        $totalTransferencia = $ventas->where('tipo_pago', 'Transferencia')->sum('total');
-
-        $conteoEfectivo = $ventas->where('tipo_pago', 'Efectivo')->count();
-        $conteoTransferencia = $ventas->where('tipo_pago', 'Transferencia')->count();
-
-
-        $usuarios = \App\Models\User::all(); // Para llenar el select
-
-        return view('ventas_corte.index', compact(
-            'ventas',
-            'usuarios',
-            'totalEfectivo',
-            'totalTransferencia',
-            'conteoEfectivo',
-            'conteoTransferencia'
-        ));
-
+    if ($usuario_id) {
+        $query->where('usuario_id', $usuario_id);
     }
+
+    if ($tipo_cliente) {
+        $query->whereHas('cliente', function ($q) use ($tipo_cliente) {
+            $q->where('tipo', $tipo_cliente);
+        });
+    }
+
+    $ventas = $query->orderBy('fecha_venta', 'desc')->get();
+
+    $totalEfectivo = $ventas->where('tipo_pago', 'Efectivo')->sum('total');
+    $totalTransferencia = $ventas->where('tipo_pago', 'Transferencia')->sum('total');
+
+    $conteoEfectivo = $ventas->where('tipo_pago', 'Efectivo')->count();
+    $conteoTransferencia = $ventas->where('tipo_pago', 'Transferencia')->count();
+
+    $usuarios = \App\Models\User::all();
+    $tiposClientes = Cliente::select('tipo')->distinct()->pluck('tipo'); // 👈 para llenar el select
+
+    return view('ventas_corte.index', compact(
+        'ventas',
+        'usuarios',
+        'tiposClientes',
+        'totalEfectivo',
+        'totalTransferencia',
+        'conteoEfectivo',
+        'conteoTransferencia'
+    ));
+}
 
     public function obtenerVenta($id)
     {
