@@ -21,6 +21,7 @@
                     <thead>
                         <tr>
                             <th class="text-uppercase text-dark text-xs font-weight-bolder">ID</th>
+                            <th class="text-uppercase text-dark text-xs font-weight-bolder ps-2">Nombre</th>
                             <th class="text-uppercase text-dark text-xs font-weight-bolder ps-2">Número</th>
                             <th class="text-uppercase text-dark text-xs font-weight-bolder ps-2 text-center">Creado</th>
                         </tr>
@@ -30,6 +31,9 @@
                             <tr>
                                 <td>
                                     <p class="text-xs font-weight-normal mb-0">{{ $telefono->id }}</p>
+                                </td>
+                                <td>
+                                    <p class="text-xs font-weight-normal mb-0">{{ $telefono->nombre }}</p>
                                 </td>
                                 <td>
                                     <p class="text-xs font-weight-normal mb-0">{{ $telefono->numero }}</p>
